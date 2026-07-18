@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import { BaseRepository } from "./base.repository";
 
 export class ConfigRepository {
   async getSiteConfig() {

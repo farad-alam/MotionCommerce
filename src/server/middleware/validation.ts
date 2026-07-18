@@ -13,7 +13,7 @@ export async function validateRequest<T>(
         ERROR_CODES.VALIDATION_ERROR,
         "Validation failed",
         400,
-        error.errors
+        error.issues
       );
     }
     throw error;

@@ -34,20 +34,33 @@ export class UserController extends BaseController {
     }
   }
 
-  async updateUserRole(req: NextRequest, { params }: { params: { id: string } }) {
+  async getUserById(id: string) {
     try {
-      const currentUser = await requireRole(Role.SUPER_ADMIN); // Only super admin can change roles for now
-      
-      // We shouldn't let someone demote themselves or similar logic, but for simplicity:
-      if (currentUser.id === params.id) {
-        throw new Error("Cannot change your own role");
-      }
+      await requireRole(Role.CLIENT_ADMIN);
+      const user = await userService.getUserById(id);
+      return this.success(user);
+    } catch (error) {
+      return this.error(error);
+    }
+  }
 
+  async updateUserRole(req: NextRequest, id: string) {
+    try {
+      const currentUser = await requireRole(Role.SUPER_ADMIN);
+      if (currentUser.id === id) throw new Error("Cannot change your own role");
       const body = await validateRequest(updateRoleSchema, await req.json());
-      
-      const updatedUser = await userService.updateUserRole(params.id, body.role);
-      
+      const updatedUser = await userService.updateUserRole(id, body.role);
       return this.success({ id: updatedUser.id, role: updatedUser.role });
+    } catch (error) {
+      return this.error(error);
+    }
+  }
+
+  async deleteUser(id: string) {
+    try {
+      await requireRole(Role.SUPER_ADMIN);
+      await userService.deleteUser(id);
+      return this.success({ deleted: true });
     } catch (error) {
       return this.error(error);
     }

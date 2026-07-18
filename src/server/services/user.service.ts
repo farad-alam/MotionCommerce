@@ -25,8 +25,16 @@ export class UserService {
     };
   }
 
+  async getUserById(id: string) {
+    return userRepository.findById(id);
+  }
+
   async updateUserRole(id: string, newRole: string) {
     return userRepository.updateRole(id, newRole);
+  }
+
+  async deleteUser(id: string) {
+    return userRepository.delete(id);
   }
 }
 

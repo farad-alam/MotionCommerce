@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { BaseRepository } from "./base.repository";
+import type { Role } from "@prisma/client";
 
 export class UserRepository {
   async findById(id: string) {
@@ -8,7 +8,7 @@ export class UserRepository {
 
   async findAll(params?: { role?: string; skip?: number; take?: number }) {
     return prisma.user.findMany({
-      where: params?.role ? { role: params.role } : undefined,
+      where: params?.role ? { role: params.role as Role } : undefined,
       skip: params?.skip || 0,
       take: params?.take || 50,
       orderBy: { createdAt: 'desc' }
@@ -17,15 +17,19 @@ export class UserRepository {
 
   async count(params?: { role?: string }) {
     return prisma.user.count({
-      where: params?.role ? { role: params.role } : undefined,
+      where: params?.role ? { role: params.role as Role } : undefined,
     });
   }
 
   async updateRole(id: string, role: string) {
     return prisma.user.update({
       where: { id },
-      data: { role },
+      data: { role: role as Role },
     });
+  }
+
+  async delete(id: string) {
+    return prisma.user.delete({ where: { id } });
   }
 }
 

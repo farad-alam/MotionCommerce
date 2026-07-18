@@ -17,12 +17,16 @@ export default async function StorefrontLayout({
   const messages = await getMessages();
   const themeConfig = await configService.getThemeConfig();
 
+  const styles = themeConfig
+    ? ((themeConfig.customStyles as Record<string, string>) ?? {})
+    : {};
+
   const customStyle = themeConfig
     ? ({
-        "--theme-primary": themeConfig.primaryColor || "#4f46e5",
-        "--theme-secondary": themeConfig.secondaryColor || "#1e293b",
-        "--theme-radius": themeConfig.borderRadius || "0.5rem",
-        "--theme-font": themeConfig.fontFamily || "Inter",
+        "--theme-primary": styles.primaryColor || "#4f46e5",
+        "--theme-secondary": styles.secondaryColor || "#1e293b",
+        "--theme-radius": styles.borderRadius || "0.5rem",
+        "--theme-font": styles.fontFamily || "Inter",
       } as React.CSSProperties)
     : undefined;
 

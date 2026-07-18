@@ -13,7 +13,7 @@ const createCategorySchema = z.object({
   image: z.string().url().optional(),
   parentId: z.string().optional(),
   sortOrder: z.number().int().optional(),
-  nameLocalized: z.record(z.string()).optional(),
+  nameLocalized: z.record(z.string(), z.string()).optional(),
 });
 
 const updateCategorySchema = createCategorySchema.extend({

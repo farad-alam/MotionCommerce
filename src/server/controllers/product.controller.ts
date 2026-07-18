@@ -18,7 +18,7 @@ const productVariantSchema = z.object({
   sku: z.string().optional(),
   price: z.number().positive(),
   stock: z.number().int().min(0).optional(),
-  attributes: z.record(z.string()),
+  attributes: z.record(z.string(), z.string()),
 });
 
 const createProductSchema = z.object({

@@ -51,10 +51,10 @@ export class ConfigController extends BaseController {
       const config = await prisma.siteConfig.upsert({
         where: { id: "default-site-config" },
         update: data,
-        create: { id: "default-site-config", storeName: "MotionCommerce", ...data },
+        create: { id: "default-site-config", siteName: "MotionCommerce", ...data },
       });
       
-      revalidateTag(CACHE_TAGS.SITE_CONFIG);
+      revalidateTag(CACHE_TAGS.SITE_CONFIG, "max");
       return this.success(config);
     } catch (error) {
       return this.error(error);
@@ -66,13 +66,18 @@ export class ConfigController extends BaseController {
       await requireRole(Role.CLIENT_ADMIN);
       const data = await validateRequest(updateThemeConfigSchema, await req.json());
       
+      // ThemeConfig stores everything in the customStyles JSON blob
       const config = await prisma.themeConfig.upsert({
         where: { id: "default-theme-config" },
-        update: data,
-        create: { id: "default-theme-config", primaryColor: "#4f46e5", ...data },
+        update: { customStyles: data as any },
+        create: {
+          id: "default-theme-config",
+          presetName: "default",
+          customStyles: { primaryColor: "#4f46e5", ...data },
+        },
       });
       
-      revalidateTag(CACHE_TAGS.THEME);
+      revalidateTag(CACHE_TAGS.THEME, "max");
       return this.success(config);
     } catch (error) {
       return this.error(error);
@@ -84,13 +89,17 @@ export class ConfigController extends BaseController {
       await requireRole(Role.CLIENT_ADMIN);
       const data = await validateRequest(updateFeatureFlagsSchema, await req.json());
       
+      // FeatureFlags stores everything in the flags JSON blob
       const config = await prisma.featureFlags.upsert({
         where: { id: "default-feature-flags" },
-        update: data,
-        create: { id: "default-feature-flags", guestCheckout: true, ...data },
+        update: { flags: data as any },
+        create: {
+          id: "default-feature-flags",
+          flags: { guestCheckout: true, whatsappOrders: false, ...data },
+        },
       });
       
-      revalidateTag(CACHE_TAGS.FEATURES);
+      revalidateTag(CACHE_TAGS.FEATURES, "max");
       return this.success(config);
     } catch (error) {
       return this.error(error);

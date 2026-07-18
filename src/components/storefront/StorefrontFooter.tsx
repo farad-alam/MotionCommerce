@@ -1,13 +1,6 @@
 import Link from "next/link";
 import { getSiteConfig, getCategories } from "@/lib/storefront-data";
-import { Facebook, Instagram, Youtube, Twitter } from "lucide-react";
-
-const SOCIAL_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
-  facebook: Facebook,
-  instagram: Instagram,
-  youtube: Youtube,
-  twitter: Twitter,
-};
+import { ExternalLink } from "lucide-react";
 
 export async function StorefrontFooter({ locale }: { locale: string }) {
   const [siteConfig, categories] = await Promise.all([getSiteConfig(), getCategories()]);
@@ -46,18 +39,17 @@ export async function StorefrontFooter({ locale }: { locale: string }) {
             {Object.keys(socialLinks).length > 0 && (
               <div className="flex items-center gap-3 mt-4">
                 {Object.entries(socialLinks).map(([key, url]) => {
-                  const Icon = SOCIAL_ICONS[key.toLowerCase()];
-                  if (!Icon || !url) return null;
+                  if (!url) return null;
                   return (
                     <a
                       key={key}
                       href={url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-1.5 text-slate-400 hover:text-white transition-colors"
+                      className="p-1.5 text-slate-400 hover:text-white transition-colors flex items-center gap-1 text-sm capitalize"
                       aria-label={key}
                     >
-                      <Icon className="w-5 h-5" />
+                      {key} <ExternalLink className="w-3 h-3" />
                     </a>
                   );
                 })}

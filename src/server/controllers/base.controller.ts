@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { handleApiError, successResponse } from "@/lib/api-response";
+import { successResponse, errorResponse } from "@/lib/api-response";
 
 export class BaseController {
   // Controller pattern foundation
@@ -9,7 +9,11 @@ export class BaseController {
     return successResponse(data, status);
   }
 
+  protected created(data: any) {
+    return successResponse(data, 201);
+  }
+
   protected error(error: unknown) {
-    return handleApiError(error);
+    return errorResponse(error);
   }
 }

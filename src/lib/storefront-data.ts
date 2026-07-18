@@ -39,33 +39,41 @@ export const getCategories = unstable_cache(
 );
 
 /** Cached product listing with optional filters */
-export const getProducts = unstable_cache(
-  async (params?: { categoryId?: string; search?: string; limit?: number; skip?: number }) => {
-    const { categoryId, search, limit = 24, skip = 0 } = params || {};
+export const getProducts = (
+  params?: { categoryId?: string; search?: string; limit?: number; skip?: number; isFeatured?: boolean }
+) => {
+  const { categoryId, search, limit = 24, skip = 0, isFeatured } = params || {};
 
-    const where: Record<string, unknown> = { status: "ACTIVE" };
-    if (categoryId) where.categories = { some: { categoryId } };
-    if (search) where.name = { contains: search, mode: "insensitive" };
+  // Cache key must be stable – include all filter values
+  const cacheKey = `products-${categoryId ?? ""}-${search ?? ""}-${limit}-${skip}-${isFeatured ?? ""}`;
 
-    const [products, total] = await Promise.all([
-      prisma.product.findMany({
-        where,
-        skip,
-        take: limit,
-        orderBy: [{ isFeatured: "desc" }, { sortOrder: "asc" }, { createdAt: "desc" }],
-        include: {
-          images: { where: { isDefault: true }, take: 1 },
-          categories: { include: { category: { select: { id: true, name: true, slug: true } } } },
-        },
-      }),
-      prisma.product.count({ where }),
-    ]);
+  return unstable_cache(
+    async () => {
+      const where: Record<string, unknown> = { status: "ACTIVE" };
+      if (categoryId) where.categories = { some: { categoryId } };
+      if (search) where.name = { contains: search, mode: "insensitive" };
+      if (isFeatured !== undefined) where.isFeatured = isFeatured;
 
-    return { products, total };
-  },
-  ["products-listing"],
-  { tags: [CACHE_TAGS.PRODUCTS], revalidate: 300 }
-);
+      const [products, total] = await Promise.all([
+        prisma.product.findMany({
+          where,
+          skip,
+          take: limit,
+          orderBy: [{ isFeatured: "desc" }, { sortOrder: "asc" }, { createdAt: "desc" }],
+          include: {
+            images: { where: { isDefault: true }, take: 1 },
+            categories: { include: { category: { select: { id: true, name: true, slug: true } } } },
+          },
+        }),
+        prisma.product.count({ where }),
+      ]);
+
+      return { products, total };
+    },
+    [cacheKey],
+    { tags: [CACHE_TAGS.PRODUCTS], revalidate: 300 }
+  )();
+};
 
 /** Individual product by slug (shorter revalidation) */
 export const getProductBySlug = unstable_cache(

@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../src/lib/prisma";
 import bcrypt from "bcryptjs";
-
-const prisma = new PrismaClient();
 
 async function main() {
   console.log("Seeding database...");
@@ -26,7 +24,7 @@ async function main() {
     update: {},
     create: {
       id: "default-site-config",
-      storeName: "MotionCommerce",
+      siteName: "MotionCommerce",
       contactEmail: "contact@motionbite.com",
     },
   });
@@ -38,9 +36,11 @@ async function main() {
     update: {},
     create: {
       id: "default-feature-flags",
-      guestCheckout: true,
-      whatsappOrders: false,
-      blog: false,
+      flags: {
+        guestCheckout: true,
+        whatsappOrders: false,
+        blog: false,
+      },
     },
   });
   console.log("Feature flags created");
@@ -51,8 +51,13 @@ async function main() {
     update: {},
     create: {
       id: "default-theme-config",
-      primaryColor: "#4f46e5", // Indigo 600
-      fontFamily: "Inter",
+      presetName: "default",
+      customStyles: {
+        primaryColor: "#4f46e5",
+        secondaryColor: "#1e293b",
+        borderRadius: "0.5rem",
+        fontFamily: "Inter",
+      },
     },
   });
   console.log("Theme config created");

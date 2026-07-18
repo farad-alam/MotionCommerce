@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { NextRequest } from "next/server";
 import { configController } from "@/server/controllers/config.controller";
 import { configService } from "@/server/services/config.service";
