@@ -1,0 +1,550 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String?   // Nullable — Google OAuth users may not have a password
+  name          String
+  phone         String?
+  avatar        String?
+  role          Role      @default(CUSTOMER)
+  isActive      Boolean   @default(true)
+  lastLoginAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  addresses     Address[]
+  orders        Order[]
+  reviews       Review[]
+  wishlistItems WishlistItem[]
+  cartItems     CartItem[]
+  blogPosts     BlogPost[]    @relation("author")
+  accounts      Account[]     // NextAuth.js OAuth accounts
+  sessions      Session[]     // NextAuth.js sessions
+}
+
+// NextAuth.js required models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type              String  // "oauth" | "credentials"
+  provider          String  // "google" | "credentials"
+  providerAccountId String
+  access_token      String? @db.Text
+  refresh_token     String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expires      DateTime
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+enum Role {
+  SUPER_ADMIN
+  AGENCY_STAFF
+  CLIENT_ADMIN
+  CLIENT_STAFF
+  CUSTOMER
+}
+
+model Address {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label      String   @default("Home")  // Home, Office, etc.
+  fullName   String
+  phone      String
+  division   String
+  district   String
+  area       String
+  address    String   // Street address
+  postalCode String?
+  isDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  orders     Order[]
+}
+
+model Category {
+  id          String     @id @default(cuid())
+  name        String
+  nameLocalized Json?    // { "bn": "বাংলা নাম", "ar": "اسم عربي" }
+  slug        String     @unique
+  description String?
+  image       String?
+  parentId    String?
+  parent      Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryTree")
+  sortOrder   Int        @default(0)
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  products    ProductCategory[]
+}
+
+model Product {
+  id              String    @id @default(cuid())
+  name            String
+  nameLocalized   Json?     // { "bn": "বাংলা নাম" }
+  slug            String    @unique
+  description     String?
+  descriptionLocalized Json? // { "bn": "বাংলা বর্ণনা" }
+  shortDescription String?
+  sku             String?   @unique
+  price           Decimal   @db.Decimal(10, 2)
+  compareAtPrice  Decimal?  @db.Decimal(10, 2)  // Original price for showing discounts
+  costPrice       Decimal?  @db.Decimal(10, 2)  // Cost for profit calculation
+  stock           Int       @default(0)
+  lowStockThreshold Int     @default(5)
+  trackInventory  Boolean   @default(true)
+  weight          Decimal?  @db.Decimal(10, 3)  // In kg
+  status          ProductStatus @default(DRAFT)
+  isFeatured      Boolean   @default(false)
+  metaTitle       String?
+  metaDescription String?
+  tags            String[]  // PostgreSQL array
+  featureData     Json?     // Feature pack data (e.g., size guide, ingredients)
+  sortOrder       Int       @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  categories      ProductCategory[]
+  images          ProductImage[]
+  variants        ProductVariant[]
+  reviews         Review[]
+  wishlistItems   WishlistItem[]
+  cartItems       CartItem[]
+  orderItems      OrderItem[]
+
+  @@index([status, isFeatured])
+  @@index([createdAt])
+}
+
+model ProductCategory {
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([productId, categoryId])
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String?
+  sortOrder Int     @default(0)
+  isDefault Boolean @default(false)
+}
+
+model ProductVariant {
+  id         String  @id @default(cuid())
+  productId  String
+  product    Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name       String  // e.g., "Red / XL"
+  sku        String? @unique
+  price      Decimal @db.Decimal(10, 2)
+  stock      Int     @default(0)
+  attributes Json    // { color: "Red", size: "XL" }
+  isActive   Boolean @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+}
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+model CartItem {
+  id         String          @id @default(cuid())
+  userId     String
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variantId  String?
+  variant    ProductVariant? @relation(fields: [variantId], references: [id])
+  quantity   Int             @default(1)
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+
+  @@unique([userId, productId, variantId])
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique  // e.g., "MC-20260001"
+  userId          String?     // Nullable — guest orders have no userId
+  user            User?       @relation(fields: [userId], references: [id])
+  guestEmail      String?     // For guest checkout
+  guestPhone      String?     // For guest checkout
+  shippingName    String      // Recipient name
+  shippingPhone   String      // Recipient phone
+  shippingAddress String      // Full address text
+  shippingDivision String?    // Division (for shipping zone calculation)
+  shippingDistrict String?    // District
+  shippingPostalCode String?  // Postal code
+  addressId       String?     // Optional link to saved Address (logged-in users only)
+  address         Address?    @relation(fields: [addressId], references: [id])
+  status          OrderStatus @default(PENDING)
+  paymentStatus   PaymentStatus @default(UNPAID)
+  paymentMethod   PaymentMethod
+  paymentMode     PaymentMode   @default(MANUAL)  // MANUAL or AUTOMATIC
+  paymentDetails  Json?       // { senderNumber, transactionId, screenshot } for manual; { tran_id, card_type } for automatic
+  subtotal        Decimal     @db.Decimal(10, 2)
+  shippingCost    Decimal     @db.Decimal(10, 2) @default(0)
+  discount        Decimal     @db.Decimal(10, 2) @default(0)
+  tax             Decimal     @db.Decimal(10, 2) @default(0)
+  total           Decimal     @db.Decimal(10, 2)
+  couponId        String?
+  coupon          Coupon?     @relation(fields: [couponId], references: [id])
+  notes           String?
+  cancelReason    String?
+  shippedAt       DateTime?
+  deliveredAt     DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  items           OrderItem[]
+
+  @@index([userId])
+  @@index([status, paymentStatus])
+  @@index([orderNumber])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id          String          @id @default(cuid())
+  orderId     String
+  order       Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product         @relation(fields: [productId], references: [id])
+  variantId   String?
+  variant     ProductVariant? @relation(fields: [variantId], references: [id])
+  name        String          // Snapshot of product name at time of order
+  sku         String?
+  price       Decimal         @db.Decimal(10, 2)
+  quantity    Int
+  total       Decimal         @db.Decimal(10, 2)
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  RETURNED
+}
+
+enum PaymentStatus {
+  UNPAID
+  PENDING_VERIFICATION  // Manual mode: customer submitted payment info, admin hasn't verified yet
+  PAID
+  PARTIALLY_REFUNDED
+  REFUNDED
+  FAILED
+}
+
+enum PaymentMethod {
+  BKASH_MANUAL    // Manual — customer sends to store's bKash, enters number + TxnID
+  NAGAD_MANUAL    // Manual — customer sends to store's Nagad, enters number + TxnID
+  BANK_TRANSFER   // Manual — customer transfers to bank, enters ref/TxnID
+  COD             // Manual — cash on delivery
+  SSLCOMMERZ      // Automatic — covers bKash, Nagad, cards, net banking via gateway
+  BKASH_PGW       // Automatic — direct bKash PGW API integration
+  NAGAD_PGW       // Automatic — direct Nagad PGW API integration
+}
+
+enum PaymentMode {
+  MANUAL        // Customer pays outside, submits proof (number + TxnID), admin verifies
+  AUTOMATIC     // Fully automated via SSLCommerz or direct gateway integration
+}
+
+model Coupon {
+  id              String     @id @default(cuid())
+  code            String     @unique
+  description     String?
+  type            CouponType
+  value           Decimal    @db.Decimal(10, 2) // Amount or percentage
+  minOrderAmount  Decimal?   @db.Decimal(10, 2)
+  maxDiscount     Decimal?   @db.Decimal(10, 2) // Cap for percentage coupons
+  usageLimit      Int?       // Total uses allowed
+  usedCount       Int        @default(0)
+  perUserLimit    Int        @default(1)
+  isActive        Boolean    @default(true)
+  startsAt        DateTime?
+  expiresAt       DateTime?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  orders          Order[]
+}
+
+enum CouponType {
+  PERCENTAGE
+  FIXED_AMOUNT
+  FREE_SHIPPING
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rating     Int      // 1–5
+  title      String?
+  comment    String?
+  isApproved Boolean  @default(false) // Moderation
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([productId, userId]) // One review per product per user
+  @@index([productId, isApproved])
+}
+
+model WishlistItem {
+  id        String          @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variantId String?         // Optional — wishlist a specific variant (e.g., "Red / XL")
+  variant   ProductVariant? @relation(fields: [variantId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId, variantId])
+}
+
+model BlogPost {
+  id              String         @id @default(cuid())
+  title           String
+  titleLocalized  Json?          // { "bn": "বাংলা শিরোনাম" }
+  slug            String         @unique
+  excerpt         String?
+  content         Json           // Tiptap JSON document (rich text)
+  contentHtml     String?        // Pre-rendered HTML for storefront (generated from content JSON)
+  coverImage      String?
+  authorId        String
+  author          User           @relation("author", fields: [authorId], references: [id])
+  status          PostStatus     @default(DRAFT)
+  isFeatured      Boolean        @default(false)
+  metaTitle       String?
+  metaDescription String?
+  tags            String[]
+  publishedAt     DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  categories      BlogPostCategory[]
+
+  @@index([status, publishedAt])
+}
+
+model BlogCategory {
+  id          String             @id @default(cuid())
+  name        String
+  nameLocalized Json?            // { "bn": "বাংলা নাম" }
+  slug        String             @unique
+  description String?
+  sortOrder   Int                @default(0)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  posts       BlogPostCategory[]
+}
+
+model BlogPostCategory {
+  postId     String
+  post       BlogPost     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   BlogCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([postId, categoryId])
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Media {
+  id          String    @id @default(cuid())
+  filename    String
+  url         String
+  cloudinaryId String?  // For Cloudinary management
+  type        MediaType
+  mimeType    String
+  size        Int       // Bytes
+  width       Int?
+  height      Int?
+  alt         String?
+  folder      String    @default("general")
+  uploadedBy  String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  DOCUMENT
+}
+
+model SiteConfig {
+  id              String   @id @default(cuid())
+  siteName        String   @default("My Store")
+  tagline         String?
+  defaultLanguage String   @default("en")      // "en" = English (default)
+  enabledLanguages String[] @default(["en", "bn"]) // Bilingual: English + Bangla
+  currency        String   @default("BDT")
+  currencySymbol  String   @default("৳")
+  timezone        String   @default("Asia/Dhaka")
+  logo            String?
+  logoDark        String?
+  favicon         String?
+  contactEmail    String?
+  contactPhone    String?
+  contactAddress  String?
+  socialLinks     Json?    // { facebook, instagram, youtube, etc. }
+  whatsappNumber  String?  // E.164 format e.g. "8801712345678" (no + or spaces)
+  whatsappOrderTemplate String? // Custom message template (uses {{items}}, {{total}}, {{name}} tokens)
+  updatedAt       DateTime @updatedAt
+}
+
+model ThemeConfig {
+  id              String @id @default(cuid())
+  presetName      String @default("default")
+  customStyles    Json   // Full theme object (see Theme Engine section)
+  updatedAt       DateTime @updatedAt
+}
+
+model PageLayout {
+  id       String @id @default(cuid())
+  slug     String @unique   // "homepage", "about", "contact", etc.
+  title    String
+  isActive Boolean @default(true)
+  sections Json   // Array of SectionConfig objects
+  metaTitle       String?
+  metaDescription String?
+  updatedAt DateTime @updatedAt
+}
+
+model NavigationConfig {
+  id         String @id @default(cuid())
+  location   String @unique // "header", "footer", "mobile"
+  items      Json   // Nested menu items
+  settings   Json?  // Style settings for this nav location
+  updatedAt  DateTime @updatedAt
+}
+
+model FooterConfig {
+  id                    String   @id @default(cuid())
+  columns               Json     // Array of { title, links[] }
+  copyright             String?
+  showPaymentIcons      Boolean  @default(true)
+  showSocialIcons       Boolean  @default(true)
+  showMotionBiteCredit  Boolean  @default(true)   // "Design & Developed by MotionBite" credit
+  motionBiteCreditText  String   @default("Design & Developed by MotionBite") // Customizable label
+  updatedAt             DateTime @updatedAt
+}
+
+model SeoConfig {
+  id               String  @id @default(cuid())
+  defaultMetaTitle String?
+  defaultMetaDesc  String?
+  ogImage          String?
+  googleAnalyticsId String?
+  googleSearchConsole String?
+  robotsTxt        String?
+  customHeadCode   String? // Custom scripts in <head>
+  updatedAt        DateTime @updatedAt
+}
+
+model FeatureFlags {
+  id        String  @id @default(cuid())
+  flags     Json    // { blog: true, wishlist: true, reviews: false, ... }
+  updatedAt DateTime @updatedAt
+}
+
+model StoreConfig {
+  id              String @id @default(cuid())
+  shippingConfig  Json   // Zones, rates, free shipping threshold
+  paymentConfig   Json   // { mode, enabledMethods, credentials (encrypted) } — SINGLE SOURCE OF TRUTH for payment settings
+  taxConfig       Json   // Tax rate, included in price or not
+  orderConfig     Json   // Min order amount, order number prefix
+  emailConfig     Json   // Resend API key, from address, templates
+  updatedAt       DateTime @updatedAt
+}
+
+model PaymentInfo {
+  id              String   @id @default(cuid())
+  bkashNumber     String?
+  bkashAccountType String?  // "personal" | "merchant"
+  nagadNumber     String?
+  bankName        String?
+  bankAccountName String?
+  bankAccountNo   String?
+  bankBranch      String?
+  bankRoutingNo   String?
+  updatedAt       DateTime @updatedAt
+}
+
+model PlatformMeta {
+  id              String   @id @default(cuid())
+  platformName    String   @default("MotionBite")
+  platformVersion String   @default("1.0.0")  // Semantic versioning
+  codebaseVersion String   @default("1.0.0")  // Master repo version at clone time
+  clonedAt        DateTime @default(now())     // When this instance was cloned
+  lastUpdatedAt   DateTime @updatedAt
+}
+
+model Page {
+  id              String     @id @default(cuid())
+  title           String
+  titleLocalized  Json?      // { "bn": "বাংলা শিরোনাম" }
+  slug            String     @unique
+  content         Json       // Tiptap JSON document (rich text)
+  contentHtml     String?    // Pre-rendered HTML
+  isActive        Boolean    @default(true)
+  metaTitle       String?
+  metaDescription String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}

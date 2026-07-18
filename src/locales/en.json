@@ -1,0 +1,9 @@
+{
+  "Common": {
+    "login": "Login",
+    "register": "Register",
+    "cart": "Cart",
+    "checkout": "Checkout",
+    "search": "Search products..."
+  }
+}
