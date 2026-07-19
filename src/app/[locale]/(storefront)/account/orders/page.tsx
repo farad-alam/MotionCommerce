@@ -43,7 +43,7 @@ export default async function AccountOrdersPage({
         </div>
       ) : (
         <div className="space-y-4">
-          {orders.map((order) => (
+          {orders.map((order: any) => (
             <div key={order.id} className="border border-slate-200 rounded-xl p-6 hover:shadow-sm transition-shadow bg-white">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 pb-4 border-b border-slate-100">
                 <div>
@@ -65,7 +65,7 @@ export default async function AccountOrdersPage({
               
               <div className="flex items-center justify-between">
                 <div className="flex -space-x-2 overflow-hidden">
-                  {order.items.slice(0, 3).map((item, idx) => (
+                  {order.items.slice(0, 3).map((item: any, idx: number) => (
                     <div key={idx} className="w-10 h-10 rounded-lg bg-slate-100 border-2 border-white flex items-center justify-center text-xs text-slate-400 overflow-hidden relative z-10">
                       {/* Image placeholder */}
                       <span className="truncate max-w-[2ch]">{item.name.charAt(0)}</span>
