@@ -13,12 +13,15 @@ export function ConfigEditor({ initialSiteConfig, initialThemeConfig, initialFea
   const handleSaveSiteConfig = async () => {
     setIsSaving(true);
     try {
-      await fetch("/api/config/site", {
+      const res = await fetch("/api/config/site", {
         method: "PATCH",
         body: JSON.stringify(siteConfig),
         headers: { "Content-Type": "application/json" },
       });
+      if (!res.ok) throw new Error(await res.text());
       router.refresh();
+    } catch (err: any) {
+      alert("Failed to save: " + err.message);
     } finally {
       setIsSaving(false);
     }
