@@ -49,14 +49,17 @@ export default function BuilderThemePage() {
   const handleSubmit = async () => {
     setSaving(true);
     try {
-      await fetch("/api/config/theme", {
+      const res = await fetch("/api/config/theme", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+      if (!res.ok) throw new Error("Failed to save theme");
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
-    } catch {} finally { setSaving(false); }
+    } catch {
+      alert("Error saving theme");
+    } finally { setSaving(false); }
   };
 
   const applyPreset = (preset: typeof presets[0]) => {

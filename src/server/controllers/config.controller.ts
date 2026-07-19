@@ -62,7 +62,7 @@ export class ConfigController extends BaseController {
         create: { id: "default-site-config", siteName: "MotionCommerce", ...data },
       });
       
-      revalidateTag(CACHE_TAGS.SITE_CONFIG, "max");
+      revalidateTag(CACHE_TAGS.SITE_CONFIG);
       return this.success(config);
     } catch (error) {
       return this.error(error);
@@ -85,7 +85,7 @@ export class ConfigController extends BaseController {
         },
       });
       
-      revalidateTag(CACHE_TAGS.THEME, "max");
+      revalidateTag(CACHE_TAGS.THEME);
       return this.success(config);
     } catch (error) {
       return this.error(error);
@@ -113,7 +113,7 @@ export class ConfigController extends BaseController {
         },
       });
 
-      revalidateTag(CACHE_TAGS.FEATURES, "max");
+      revalidateTag(CACHE_TAGS.FEATURES);
       return this.success(config);
     } catch (error) {
       return this.error(error);
