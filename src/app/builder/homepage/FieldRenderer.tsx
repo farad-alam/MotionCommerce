@@ -1,18 +1,109 @@
 "use client";
 
+import { useState } from "react";
 import { FieldMeta } from "@/config/sections/section-schemas";
 import { RepeatableFieldEditor } from "./RepeatableFieldEditor";
+import { LayoutTemplate, X, CheckCircle2 } from "lucide-react";
 
 interface FieldRendererProps {
   fieldKey: string;
   value: any;
   meta: FieldMeta;
   onChange: (key: string, value: any) => void;
+  sectionType?: string;
 }
 
-export function FieldRenderer({ fieldKey, value, meta, onChange }: FieldRendererProps) {
+export function FieldRenderer({ fieldKey, value, meta, onChange, sectionType }: FieldRendererProps) {
+  const [modalOpen, setModalOpen] = useState(false);
+
   const inputClass =
     "w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-1.5 text-sm text-white focus:ring-1 focus:ring-indigo-500 focus:outline-none";
+
+  // Special Variant Selector Modal
+  if (fieldKey === "variant" && meta.type === "select" && sectionType) {
+    return (
+      <>
+        <button
+          onClick={() => setModalOpen(true)}
+          className="w-full flex items-center justify-between px-4 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors border border-indigo-500 shadow-sm"
+        >
+          <span className="font-semibold text-sm">
+            {value ? `Variant: ${value.toUpperCase()}` : "Choose Variant"}
+          </span>
+          <LayoutTemplate className="w-5 h-5" />
+        </button>
+
+        {modalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 sm:p-6 lg:p-12">
+            <div className="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl w-full max-w-7xl h-full max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+              <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950">
+                <div>
+                  <h2 className="text-xl font-bold text-white">Choose Design Variant</h2>
+                  <p className="text-sm text-slate-400">Select a layout style for this section.</p>
+                </div>
+                <button
+                  onClick={() => setModalOpen(false)}
+                  className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-6 bg-slate-900">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {meta.options?.map((opt) => {
+                    const isSelected = value === opt;
+                    return (
+                      <div
+                        key={opt}
+                        onClick={() => {
+                          onChange(fieldKey, opt);
+                          setModalOpen(false);
+                        }}
+                        className={`group relative rounded-xl overflow-hidden cursor-pointer border-2 transition-all duration-300 ${
+                          isSelected 
+                            ? "border-indigo-500 shadow-[0_0_20px_rgba(79,70,229,0.3)] ring-2 ring-indigo-500/50" 
+                            : "border-slate-700 hover:border-slate-500 hover:shadow-xl"
+                        }`}
+                      >
+                        <div className="bg-slate-800 px-4 py-3 flex items-center justify-between border-b border-slate-700/50 relative z-10">
+                          <span className="font-semibold text-white uppercase tracking-wider text-sm">
+                            {opt}
+                          </span>
+                          {isSelected && <CheckCircle2 className="w-5 h-5 text-indigo-400" />}
+                        </div>
+                        
+                        {/* Scaled iframe preview */}
+                        <div className="relative w-full aspect-[16/9] bg-white overflow-hidden flex items-center justify-center">
+                          <div className="absolute top-1/2 left-1/2 w-[1600px] h-[900px] -translate-x-1/2 -translate-y-1/2 origin-center transform scale-[0.35] sm:scale-[0.4] lg:scale-[0.35] xl:scale-[0.45] pointer-events-none">
+                            <iframe
+                              src={`/preview?section=${sectionType}&variant=${opt}`}
+                              className="w-full h-full border-0"
+                              loading="lazy"
+                              tabIndex={-1}
+                            />
+                          </div>
+                          
+                          {/* Hover Overlay */}
+                          <div className={`absolute inset-0 bg-indigo-600/0 group-hover:bg-indigo-600/10 transition-colors flex items-center justify-center ${isSelected ? 'bg-indigo-600/5' : ''}`}>
+                            <div className="translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                              <span className="px-6 py-2 bg-indigo-600 text-white font-bold rounded-full shadow-lg">
+                                Select Variant
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
 
   switch (meta.type) {
     case "boolean":

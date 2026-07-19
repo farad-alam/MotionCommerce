@@ -155,6 +155,7 @@ function SortableSectionCard({
                   value={section.settings[key]}
                   meta={meta}
                   onChange={(k, v) => onUpdate(section.id, k, v)}
+                  sectionType={section.type}
                 />
               </div>
             );
