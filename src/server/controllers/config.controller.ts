@@ -20,6 +20,7 @@ const updateSiteConfigSchema = z.object({
 });
 
 const updateThemeConfigSchema = z.object({
+  themePreset: z.string().optional(),
   primaryColor: z.string().optional(),
   secondaryColor: z.string().optional(),
   fontFamily: z.string().optional(),
@@ -62,7 +63,7 @@ export class ConfigController extends BaseController {
         create: { id: "default-site-config", siteName: "MotionCommerce", ...data },
       });
       
-      revalidateTag(CACHE_TAGS.SITE_CONFIG);
+      revalidateTag(CACHE_TAGS.SITE_CONFIG, "max");
       return this.success(config);
     } catch (error) {
       return this.error(error);
@@ -75,17 +76,21 @@ export class ConfigController extends BaseController {
       const data = await validateRequest(updateThemeConfigSchema, await req.json());
       
       // ThemeConfig stores everything in the customStyles JSON blob
+      const { themePreset, ...styleData } = data as any;
       const config = await prisma.themeConfig.upsert({
         where: { id: "default-theme-config" },
-        update: { customStyles: data as any },
+        update: { 
+          presetName: themePreset || "default",
+          customStyles: styleData 
+        },
         create: {
           id: "default-theme-config",
-          presetName: "default",
-          customStyles: { primaryColor: "#4f46e5", ...data },
+          presetName: themePreset || "default",
+          customStyles: { primaryColor: "#4f46e5", ...styleData },
         },
       });
       
-      revalidateTag(CACHE_TAGS.THEME);
+      revalidateTag(CACHE_TAGS.THEME, "max");
       return this.success(config);
     } catch (error) {
       return this.error(error);
@@ -113,7 +118,7 @@ export class ConfigController extends BaseController {
         },
       });
 
-      revalidateTag(CACHE_TAGS.FEATURES);
+      revalidateTag(CACHE_TAGS.FEATURES, "max");
       return this.success(config);
     } catch (error) {
       return this.error(error);

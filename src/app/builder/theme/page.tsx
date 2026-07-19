@@ -49,10 +49,15 @@ export default function BuilderThemePage() {
   const handleSubmit = async () => {
     setSaving(true);
     try {
+      const payload = {
+        themePreset: formData.themePreset,
+        ...formData.customStyles
+      };
+      
       const res = await fetch("/api/config/theme", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error("Failed to save theme");
       setSuccess(true);
