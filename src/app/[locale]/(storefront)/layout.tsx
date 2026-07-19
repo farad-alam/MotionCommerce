@@ -23,18 +23,21 @@ export default async function StorefrontLayout({
     ? ((themeConfig.customStyles as Record<string, string>) ?? {})
     : {};
 
-  const customStyle = themeConfig
-    ? ({
-        "--theme-primary": styles.primaryColor || "#4f46e5",
-        "--theme-secondary": styles.secondaryColor || "#1e293b",
-        "--theme-radius": styles.borderRadius || "0.5rem",
-        "--theme-font": styles.fontFamily || "Inter",
-      } as React.CSSProperties)
-    : undefined;
+  const cssVariables = themeConfig
+    ? `
+      :root {
+        --theme-primary: ${styles.primaryColor || "#4f46e5"};
+        --theme-secondary: ${styles.secondaryColor || "#1e293b"};
+        --theme-radius: ${styles.borderRadius || "0.5rem"};
+        --theme-font: ${styles.fontFamily || "Inter"};
+      }
+    `
+    : "";
 
   return (
     <NextIntlClientProvider messages={messages} locale={locale}>
-      <div className="flex min-h-screen flex-col pb-16 md:pb-0" style={customStyle}>
+      {cssVariables && <style dangerouslySetInnerHTML={{ __html: cssVariables }} />}
+      <div className="flex min-h-screen flex-col pb-16 md:pb-0">
         <StorefrontHeader locale={locale} />
         <main className="flex-1">{children}</main>
         <StorefrontFooter locale={locale} />
