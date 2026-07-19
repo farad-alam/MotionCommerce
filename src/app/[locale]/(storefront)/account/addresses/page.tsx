@@ -39,7 +39,7 @@ export default async function AccountAddressesPage({
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {addresses.map((address) => (
+          {addresses.map((address: any) => (
             <div key={address.id} className={`border rounded-xl p-5 bg-white relative ${address.isDefault ? 'border-indigo-500 ring-1 ring-indigo-500/20' : 'border-slate-200 hover:border-slate-300 transition-colors'}`}>
               {address.isDefault && (
                 <span className="absolute -top-2.5 right-4 bg-indigo-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow-sm">
