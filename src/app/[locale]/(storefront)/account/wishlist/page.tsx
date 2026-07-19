@@ -46,7 +46,7 @@ export default async function AccountWishlistPage({
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {wishlist.map((item) => (
+          {wishlist.map((item: any) => (
             <div key={item.id} className="group relative border border-slate-200 rounded-xl p-4 bg-white hover:shadow-md transition-all">
               <button className="absolute top-2 right-2 p-2 bg-white/80 backdrop-blur rounded-full text-slate-400 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all z-10">
                 <Trash2 className="w-4 h-4" />

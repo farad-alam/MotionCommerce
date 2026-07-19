@@ -85,7 +85,7 @@ export default async function DashboardOrdersPage({
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-sm">
-              {orders.map((order) => (
+              {orders.map((order: any) => (
                 <tr key={order.id} className="hover:bg-slate-50/50 transition-colors">
                   <td className="px-6 py-4 font-medium text-slate-900">
                     <Link href={`/dashboard/orders/${order.id}`} className="hover:text-indigo-600 transition-colors">

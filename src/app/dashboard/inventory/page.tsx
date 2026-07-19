@@ -61,7 +61,7 @@ export default async function InventoryPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {products.map((product) => {
+            {products.map((product: any) => {
               const isLow = product.stock !== null && product.lowStockThreshold !== null && product.stock <= product.lowStockThreshold && product.stock > 0;
               const isOut = product.stock === 0;
               return (

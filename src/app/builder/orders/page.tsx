@@ -36,7 +36,7 @@ export default async function BuilderOrdersPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-700/50 text-sm">
-            {orders.map((order) => (
+            {orders.map((order: any) => (
               <tr key={order.id} className="hover:bg-slate-800 transition-colors">
                 <td className="px-6 py-4 font-medium text-white">
                   {order.orderNumber}

@@ -83,7 +83,7 @@ export default function DashboardNavigationPage() {
 
       <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
         <div className="space-y-3">
-          {items.map((item, index) => (
+          {items.map((item: any, index: number) => (
             <div key={item.id} className="flex items-center gap-3 bg-slate-50 border border-slate-200 p-3 rounded-lg group">
               <div className="flex flex-col gap-1 text-slate-400">
                 <button type="button" onClick={() => moveItem(index, 'up')} disabled={index===0} className="hover:text-slate-700 disabled:opacity-30">▲</button>

@@ -52,7 +52,7 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
         isFeatured,
         categoryIds: selectedCategories,
         tags,
-        images: imageUrls.map((url, i) => ({ url, isDefault: i === 0, sortOrder: i })),
+        images: imageUrls.map((url: any, i: number) => ({ url, isDefault: i === 0, sortOrder: i })),
       };
 
       const res = await fetch(
@@ -213,7 +213,7 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
             </div>
             {imageUrls.length > 0 && (
               <div className="grid grid-cols-4 gap-3 mt-3">
-                {imageUrls.map((url, i) => (
+                {imageUrls.map((url: any, i: number) => (
                   <div key={i} className="relative group">
                     <img src={url} alt="" className="h-20 w-full object-cover rounded-lg border border-slate-200" />
                     {i === 0 && (
@@ -274,7 +274,7 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
           <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-3">
             <h2 className="font-semibold text-slate-900">Categories</h2>
             <div className="space-y-2 max-h-48 overflow-y-auto">
-              {categories.map((cat) => (
+              {categories.map((cat: any) => (
                 <label key={cat.id} className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
@@ -312,7 +312,7 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
               </button>
             </div>
             <div className="flex flex-wrap gap-2">
-              {tags.map((tag) => (
+              {tags.map((tag: any) => (
                 <span
                   key={tag}
                   className="inline-flex items-center gap-1 px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded-full text-xs"

@@ -93,7 +93,7 @@ export class ProductRepository {
         compareAtPrice: compareAtPrice ?? null,
         costPrice: costPrice ?? null,
         categories: categoryIds
-          ? { create: categoryIds.map((id) => ({ categoryId: id })) }
+          ? { create: categoryIds.map((id: any) => ({ categoryId: id })) }
           : undefined,
         images: images
           ? { create: images }
@@ -114,7 +114,7 @@ export class ProductRepository {
         await tx.productCategory.deleteMany({ where: { productId: id } });
         if (categoryIds.length > 0) {
           await tx.productCategory.createMany({
-            data: categoryIds.map((catId) => ({ productId: id, categoryId: catId })),
+            data: categoryIds.map((catId: any) => ({ productId: id, categoryId: catId })),
           });
         }
       }

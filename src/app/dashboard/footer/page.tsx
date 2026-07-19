@@ -92,7 +92,7 @@ export default function DashboardFooterPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {sections.map((section, sIdx) => (
+        {sections.map((section: any, sIdx: number) => (
           <div key={section.id} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-4">
             <div className="flex items-center gap-3">
               <input type="text" value={section.title} onChange={e => updateSectionTitle(sIdx, e.target.value)}

@@ -80,7 +80,7 @@ export default async function ProductsPage({ params, searchParams }: ProductsPag
           {products.length > 0 ? (
             <>
               <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
-                {products.map((product) => (
+                {products.map((product: any) => (
                   <ProductCard key={product.id} product={product as any} locale={locale} />
                 ))}
               </div>
@@ -88,7 +88,7 @@ export default async function ProductsPage({ params, searchParams }: ProductsPag
               {/* Pagination */}
               {totalPages > 1 && (
                 <div className="flex justify-center gap-2 mt-10">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((p: any) => (
                     <Link
                       key={p}
                       href={`/${locale}/products?${category ? `category=${category}&` : ""}${search ? `search=${search}&` : ""}page=${p}`}

@@ -73,7 +73,7 @@ export function ProductReviewForm({ productId }: { productId: string }) {
       <div>
         <label className="block text-sm font-medium text-slate-700 mb-1">Rating *</label>
         <div className="flex gap-1">
-          {[1, 2, 3, 4, 5].map((star) => (
+          {[1, 2, 3, 4, 5].map((star: any) => (
             <button
               key={star}
               type="button"

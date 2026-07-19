@@ -63,7 +63,7 @@ export default function HomepageBuilder() {
   };
 
   const updateSectionSetting = (id: string, key: string, value: any) => {
-    setSections(sections.map(sec => {
+    setSections(sections.map((sec: any) => {
       if (sec.id === id) {
         return { ...sec, settings: { ...sec.settings, [key]: value } };
       }
@@ -112,7 +112,7 @@ export default function HomepageBuilder() {
       <div className="flex gap-8 items-start">
         {/* Editor Area */}
         <div className="flex-1 space-y-4">
-          {sections.map((section, index) => (
+          {sections.map((section: any, index: number) => (
             <div key={section.id} className="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden group">
               <div className="bg-slate-900/50 px-4 py-3 border-b border-slate-700 flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -133,7 +133,7 @@ export default function HomepageBuilder() {
                 </button>
               </div>
               <div className="p-4 space-y-4">
-                {Object.keys(section.settings).map(key => (
+                {Object.keys(section.settings).map((key: any) => (
                   <div key={key}>
                     <label className="block text-xs font-medium text-slate-400 mb-1 capitalize">{key}</label>
                     {typeof section.settings[key] === 'boolean' ? (

@@ -64,7 +64,7 @@ export function CartDrawer() {
               </button>
             </div>
           ) : (
-            items.map((item) => (
+            items.map((item: any) => (
               <div
                 key={item.key}
                 className="flex gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100"

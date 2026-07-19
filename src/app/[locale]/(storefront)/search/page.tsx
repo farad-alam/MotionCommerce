@@ -35,7 +35,7 @@ export default async function SearchPage({ params, searchParams }: SearchPagePro
 
       {products.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {products.map((product) => (
+          {products.map((product: any) => (
             <ProductCard key={product.id} product={product as any} locale={localeValue} />
           ))}
         </div>

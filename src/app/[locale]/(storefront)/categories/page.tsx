@@ -30,7 +30,7 @@ export default async function CategoriesPage({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {topLevelCategories.map((category) => (
+        {topLevelCategories.map((category: any) => (
           <Link 
             key={category.id}
             href={`/${locale}/products?category=${category.slug}`}
@@ -51,7 +51,7 @@ export default async function CategoriesPage({
             {/* Show up to 3 subcategories */}
             {category.children && category.children.length > 0 && (
               <div className="mt-6 flex flex-wrap justify-center gap-2">
-                {category.children.slice(0, 3).map(child => (
+                {category.children.slice(0, 3).map((child: any) => (
                   <span key={child.id} className="text-xs font-medium text-slate-500 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">
                     {child.name}
                   </span>

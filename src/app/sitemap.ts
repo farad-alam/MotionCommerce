@@ -13,14 +13,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     select: { slug: true, updatedAt: true },
   });
 
-  const productUrls = products.map((product) => ({
+  const productUrls = products.map((product: any) => ({
     url: `${baseUrl}/en/products/${product.slug}`,
     lastModified: product.updatedAt,
     changeFrequency: 'weekly' as const,
     priority: 0.8,
   }));
 
-  const categoryUrls = categories.map((category) => ({
+  const categoryUrls = categories.map((category: any) => ({
     url: `${baseUrl}/en/products?category=${category.slug}`,
     lastModified: category.updatedAt,
     changeFrequency: 'weekly' as const,
@@ -35,7 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/bn/products',
     '/en/blog',
     '/en/categories',
-  ].map((route) => ({
+  ].map((route: any) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
     changeFrequency: 'daily' as const,

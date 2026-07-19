@@ -83,13 +83,13 @@ export function DashboardSidebar() {
       </div>
 
       <nav className="flex-1 px-3 py-4 overflow-y-auto space-y-6">
-        {navGroups.map((group) => (
+        {navGroups.map((group: any) => (
           <div key={group.label}>
             <p className="px-3 mb-1 text-xs font-semibold uppercase tracking-widest text-slate-500">
               {group.label}
             </p>
             <div className="space-y-0.5">
-              {group.items.map((item) => (
+              {group.items.map((item: any) => (
                 <Link
                   key={item.name}
                   href={item.href}

@@ -287,7 +287,7 @@ export default function CheckoutPage() {
             <h2 className="text-lg font-bold text-slate-900 mb-6">Order Summary</h2>
             
             <div className="space-y-4 mb-6">
-              {items.map(item => (
+              {items.map((item: any) => (
                 <div key={item.key} className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-3 flex-1 min-w-0">
                     <div className="w-12 h-12 rounded bg-white border border-slate-200 overflow-hidden flex-shrink-0">

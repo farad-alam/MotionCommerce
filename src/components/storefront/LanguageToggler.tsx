@@ -22,7 +22,7 @@ export function LanguageToggler({ locale }: { locale: string }) {
   return (
     <div className="flex items-center gap-1 border border-slate-200 rounded-md px-1 py-0.5">
       <Globe className="w-3.5 h-3.5 text-slate-400" />
-      {LOCALES.map((loc) => (
+      {LOCALES.map((loc: any) => (
         <button
           key={loc.code}
           onClick={() => switchLocale(loc.code)}

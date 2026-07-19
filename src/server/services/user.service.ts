@@ -9,7 +9,7 @@ export class UserService {
     ]);
 
     return {
-      users: users.map(user => ({
+      users: users.map((user: any) => ({
         id: user.id,
         name: user.name,
         email: user.email,

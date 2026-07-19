@@ -25,7 +25,7 @@ export default async function AccountLayout({
         {/* Sidebar Nav */}
         <aside className="w-full lg:w-64 flex-shrink-0">
           <nav className="space-y-1">
-            {navItems.map((item) => (
+            {navItems.map((item: any) => (
               <Link
                 key={item.name}
                 href={item.href}

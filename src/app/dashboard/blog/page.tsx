@@ -41,7 +41,7 @@ export default async function DashboardBlogPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 text-sm">
-            {posts.map((post) => (
+            {posts.map((post: any) => (
               <tr key={post.id} className="hover:bg-slate-50 transition-colors">
                 <td className="px-6 py-4">
                   <div className="font-medium text-slate-900">{post.title}</div>

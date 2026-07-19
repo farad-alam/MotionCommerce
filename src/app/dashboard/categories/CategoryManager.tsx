@@ -51,7 +51,7 @@ function CategoryRow({
           </button>
         </td>
       </tr>
-      {category.children?.map((child) => (
+      {category.children?.map((child: any) => (
         <CategoryRow key={child.id} category={child} depth={depth + 1} onDelete={onDelete} />
       ))}
     </>
@@ -149,7 +149,7 @@ export function CategoryManager({ initialCategories }: CategoryManagerProps) {
                 className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="">— Top Level —</option>
-                {flatCategories.map((cat) => (
+                {flatCategories.map((cat: any) => (
                   <option key={cat.id} value={cat.id}>
                     {cat.name}
                   </option>
@@ -186,7 +186,7 @@ export function CategoryManager({ initialCategories }: CategoryManagerProps) {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200">
-            {categories.map((cat) => (
+            {categories.map((cat: any) => (
               <CategoryRow key={cat.id} category={cat} depth={0} onDelete={handleDelete} />
             ))}
           </tbody>

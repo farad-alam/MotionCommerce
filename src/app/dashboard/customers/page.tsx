@@ -67,7 +67,7 @@ export default async function DashboardCustomersPage({
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-sm">
-              {customers.map((customer) => (
+              {customers.map((customer: any) => (
                 <tr key={customer.id} className="hover:bg-slate-50/50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">

@@ -95,7 +95,7 @@ export default function BuilderThemePage() {
       <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-sm space-y-6">
         <h2 className="font-semibold text-white text-base">Quick Presets</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {presets.map(p => (
+          {presets.map((p: any) => (
             <button
               key={p.name}
               onClick={() => applyPreset(p)}

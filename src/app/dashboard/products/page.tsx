@@ -44,7 +44,7 @@ export default async function ProductsPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200">
-            {products.map((product) => (
+            {products.map((product: any) => (
               <tr key={product.id} className="hover:bg-slate-50 transition-colors">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
@@ -66,7 +66,7 @@ export default async function ProductsPage() {
                   </div>
                 </td>
                 <td className="px-6 py-4 text-slate-500">
-                  {product.categories.map((c) => c.category.name).join(", ") || "—"}
+                  {product.categories.map((c: any) => c.category.name).join(", ") || "—"}
                 </td>
                 <td className="px-6 py-4 font-medium text-slate-900">
                   ৳{Number(product.price).toLocaleString()}

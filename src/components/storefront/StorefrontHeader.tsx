@@ -37,7 +37,7 @@ export async function StorefrontHeader({ locale }: { locale: string }) {
             >
               Products
             </Link>
-            {categories.slice(0, 4).map((cat) => (
+            {categories.slice(0, 4).map((cat: any) => (
               <Link
                 key={cat.id}
                 href={`/${locale}/products?category=${cat.slug}`}

@@ -39,7 +39,7 @@ export default async function DashboardStaticPagesPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 text-sm">
-            {pages.map((page) => (
+            {pages.map((page: any) => (
               <tr key={page.id} className="hover:bg-slate-50 transition-colors">
                 <td className="px-6 py-4">
                   <div className="font-medium text-slate-900">{page.title}</div>

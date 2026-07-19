@@ -147,7 +147,7 @@ export default function BuilderFeaturesPage() {
           <h2 className="font-semibold text-white text-base mb-1">Core Modules</h2>
           <p className="text-xs text-slate-400 mb-4">Essential storefront features</p>
           <div className="divide-y divide-slate-700/50">
-            {CORE_FEATURES.map(f => (
+            {CORE_FEATURES.map((f: { key: keyof FeatureFlagMap; label: string; desc: string; icon: any }) => (
               <ToggleRow
                 key={f.key}
                 label={f.label}
@@ -165,7 +165,7 @@ export default function BuilderFeaturesPage() {
           <h2 className="font-semibold text-white text-base mb-1">Advanced Features</h2>
           <p className="text-xs text-slate-400 mb-4">Power features for growing stores</p>
           <div className="divide-y divide-slate-700/50">
-            {ADVANCED_FEATURES.map(f => (
+            {ADVANCED_FEATURES.map((f: { key: keyof FeatureFlagMap; label: string; desc: string; icon: any; badge?: string }) => (
               <div key={f.key} className="flex items-start justify-between py-3.5 border-b border-slate-700 last:border-0">
                 <div className="flex items-start gap-3">
                   <div className={`mt-0.5 p-1.5 rounded-md ${flags[f.key] ? "bg-indigo-500/20 text-indigo-400" : "bg-slate-700 text-slate-500"}`}>

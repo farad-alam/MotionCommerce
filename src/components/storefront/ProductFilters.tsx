@@ -61,7 +61,7 @@ export function ProductFilters({ categories, locale }: FilterProps) {
               All Products
             </Link>
           </li>
-          {categories.map((cat) => (
+          {categories.map((cat: any) => (
             <li key={cat.id}>
               <Link
                 href={`${pathname}?${new URLSearchParams({ ...Object.fromEntries(searchParams), category: cat.slug }).toString()}`}

@@ -142,7 +142,7 @@ export default function CouponsPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {coupons.map((c) => (
+            {coupons.map((c: any) => (
               <tr key={c.id} className="hover:bg-slate-50 transition-colors">
                 <td className="px-6 py-4 font-mono font-semibold text-indigo-600">{c.code}</td>
                 <td className="px-6 py-4 text-slate-700">

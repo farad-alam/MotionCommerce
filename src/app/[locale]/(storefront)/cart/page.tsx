@@ -43,7 +43,7 @@ export default function CartPage() {
             <div className="col-span-3 text-right">Total</div>
           </div>
 
-          {items.map((item) => (
+          {items.map((item: any) => (
             <div
               key={item.key}
               className="group flex flex-col sm:grid sm:grid-cols-12 gap-4 items-start sm:items-center py-4 border-b border-slate-100 last:border-0"
@@ -164,7 +164,7 @@ export default function CartPage() {
               
               <button
                 onClick={() => {
-                  const text = `Hello! I'd like to place an order for:\n\n${items.map(i => `- ${i.name} (x${i.quantity})`).join('\n')}\n\nTotal: ৳${total.toLocaleString()}`;
+                  const text = `Hello! I'd like to place an order for:\n\n${items.map((i: any) => `- ${i.name} (x${i.quantity})`).join('\n')}\n\nTotal: ৳${total.toLocaleString()}`;
                   window.open(`https://wa.me/8801712345678?text=${encodeURIComponent(text)}`, "_blank");
                 }}
                 className="flex items-center justify-center gap-2 w-full py-3.5 bg-[#25D366] hover:bg-[#128C7E] text-white font-semibold rounded-xl transition-all shadow-sm active:scale-95"

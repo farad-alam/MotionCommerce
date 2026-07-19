@@ -15,7 +15,7 @@ export async function CategoryGridSection({ settings, locale = "en" }: { setting
         <h2 className="text-3xl font-bold text-slate-900 mb-10 text-center">{settings.title}</h2>
         
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {categories.map(cat => (
+          {categories.map((cat: any) => (
             <Link 
               key={cat.id} 
               href={`/${locale}/products?category=${cat.slug}`}

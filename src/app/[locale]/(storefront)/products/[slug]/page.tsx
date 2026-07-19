@@ -93,7 +93,7 @@ export default async function ProductDetailPage({ params }: PDPProps) {
           {/* Thumbnail strip */}
           {product.images.length > 1 && (
             <div className="flex gap-2 overflow-x-auto pb-1">
-              {product.images.map((img, i) => (
+              {product.images.map((img: any, i: number) => (
                 <div
                   key={img.id}
                   className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 ${i === 0 ? "border-indigo-500" : "border-slate-200"}`}
@@ -126,7 +126,7 @@ export default async function ProductDetailPage({ params }: PDPProps) {
           {avgRating && (
             <div className="flex items-center gap-2 mt-2">
               <div className="flex">
-                {[1, 2, 3, 4, 5].map((star) => (
+                {[1, 2, 3, 4, 5].map((star: any) => (
                   <Star
                     key={star}
                     className={`w-4 h-4 ${star <= Math.round(avgRating) ? "text-amber-400 fill-amber-400" : "text-slate-200 fill-slate-200"}`}
@@ -177,7 +177,7 @@ export default async function ProductDetailPage({ params }: PDPProps) {
             <div className="mt-6">
               <p className="text-sm font-medium text-slate-700 mb-2">Options</p>
               <div className="flex flex-wrap gap-2">
-                {product.variants.map((variant) => (
+                {product.variants.map((variant: any) => (
                   <button
                     key={variant.id}
                     disabled={variant.stock === 0}
@@ -266,13 +266,13 @@ export default async function ProductDetailPage({ params }: PDPProps) {
                   <p className="text-slate-500">No reviews yet. Be the first to review this product!</p>
                 </div>
               ) : (
-                product.reviews.map((review) => (
+                product.reviews.map((review: any) => (
                   <div key={review.id} className="bg-white rounded-xl border border-slate-100 p-5">
                     <div className="flex items-start justify-between">
                       <div>
                         <p className="font-medium text-slate-800">{review.user.name || "Customer"}</p>
                         <div className="flex mt-1">
-                          {[1, 2, 3, 4, 5].map((star) => (
+                          {[1, 2, 3, 4, 5].map((star: any) => (
                             <Star
                               key={star}
                               className={`w-3.5 h-3.5 ${star <= review.rating ? "text-amber-400 fill-amber-400" : "text-slate-200 fill-slate-200"}`}

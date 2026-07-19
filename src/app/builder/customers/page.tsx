@@ -34,7 +34,7 @@ export default async function BuilderCustomersPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-700/50 text-sm">
-            {customers.map((customer) => (
+            {customers.map((customer: any) => (
               <tr key={customer.id} className="hover:bg-slate-800 transition-colors">
                 <td className="px-6 py-4 font-medium text-white">
                   {customer.name}

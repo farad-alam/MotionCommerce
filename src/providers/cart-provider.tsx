@@ -64,7 +64,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         const idx = prev.findIndex((i) => i.key === key);
         let next: CartItem[];
         if (idx >= 0) {
-          next = prev.map((item, i) =>
+          next = prev.map((item: any, i: number) =>
             i === idx
               ? { ...item, quantity: Math.min(item.stock, item.quantity + qty) }
               : item
@@ -85,7 +85,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       if (quantity <= 0) {
         next = prev.filter((i) => i.key !== key);
       } else {
-        next = prev.map((i) =>
+        next = prev.map((i: any) =>
           i.key === key ? { ...i, quantity: Math.min(i.stock, quantity) } : i
         );
       }

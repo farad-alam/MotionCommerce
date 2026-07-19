@@ -37,7 +37,7 @@ export default async function BlogListingPage({
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {posts.map((post) => (
+          {posts.map((post: any) => (
             <article key={post.id} className="flex flex-col bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-lg transition-shadow">
               <Link href={`/${locale}/blog/${post.slug}`} className="block aspect-[16/9] bg-slate-100 overflow-hidden">
                 {post.coverImage ? (

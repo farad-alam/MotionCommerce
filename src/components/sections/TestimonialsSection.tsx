@@ -25,7 +25,7 @@ export function TestimonialsSection({ settings }: { settings: any }) {
             >
               {/* Stars */}
               <div className="flex gap-0.5">
-                {[1, 2, 3, 4, 5].map((star) => (
+                {[1, 2, 3, 4, 5].map((star: any) => (
                   <Star
                     key={star}
                     className={`w-4 h-4 ${star <= t.rating ? "fill-amber-400 text-amber-400" : "fill-slate-200 text-slate-200"}`}
