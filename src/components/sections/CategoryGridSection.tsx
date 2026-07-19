@@ -6,7 +6,7 @@ export async function CategoryGridSection({ settings, locale = "en" }: { setting
   
   // Take top level categories up to limit
   const categories = allCategories
-    .filter(c => !c.parentId)
+    .filter((c: any) => !c.parentId)
     .slice(0, settings.limit || 6);
 
   return (

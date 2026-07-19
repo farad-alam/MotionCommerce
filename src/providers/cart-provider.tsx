@@ -50,8 +50,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems(loadCart());
   }, []);
 
-  const count = items.reduce((acc, i) => acc + i.quantity, 0);
-  const total = items.reduce((acc, i) => acc + i.price * i.quantity, 0);
+  const count = items.reduce((acc: number, i: any) => acc + i.quantity, 0);
+  const total = items.reduce((acc: number, i: any) => acc + i.price * i.quantity, 0);
 
   const addItem = useCallback(
     (incoming: Omit<CartItem, "key" | "quantity"> & { quantity?: number }) => {
@@ -83,7 +83,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems((prev) => {
       let next: CartItem[];
       if (quantity <= 0) {
-        next = prev.filter((i) => i.key !== key);
+        next = prev.filter((i: any) => i.key !== key);
       } else {
         next = prev.map((i: any) =>
           i.key === key ? { ...i, quantity: Math.min(i.stock, quantity) } : i
@@ -96,7 +96,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const removeItem = useCallback((key: string) => {
     setItems((prev) => {
-      const next = prev.filter((i) => i.key !== key);
+      const next = prev.filter((i: any) => i.key !== key);
       saveCart(next);
       return next;
     });

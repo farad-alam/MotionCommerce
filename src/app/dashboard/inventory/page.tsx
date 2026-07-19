@@ -17,8 +17,8 @@ export default async function InventoryPage() {
     },
   });
 
-  const lowStock = products.filter((p) => p.stock !== null && p.lowStockThreshold !== null && p.stock <= p.lowStockThreshold);
-  const outOfStock = products.filter((p) => p.stock === 0);
+  const lowStock = products.filter((p: any) => p.stock !== null && p.lowStockThreshold !== null && p.stock <= p.lowStockThreshold);
+  const outOfStock = products.filter((p: any) => p.stock === 0);
 
   return (
     <div className="space-y-6">

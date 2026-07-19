@@ -72,7 +72,7 @@ export default function HomepageBuilder() {
   };
 
   const removeSection = (id: string) => {
-    setSections(sections.filter(s => s.id !== id));
+    setSections(sections.filter((s: any) => s.id !== id));
   };
 
   const moveSection = (index: number, direction: 'up' | 'down') => {

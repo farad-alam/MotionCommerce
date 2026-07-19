@@ -60,7 +60,7 @@ export default async function ProductsPage({ params, searchParams }: ProductsPag
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">
-            {search ? `Search: "${search}"` : category ? categories.find((c) => c.slug === category)?.name || "Products" : "All Products"}
+            {search ? `Search: "${search}"` : category ? categories.find((c: any) => c.slug === category)?.name || "Products" : "All Products"}
           </h1>
           <p className="text-sm text-slate-500 mt-1">{total} product{total !== 1 ? "s" : ""} found</p>
         </div>

@@ -94,7 +94,7 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
 
   const toggleCategory = (id: string) => {
     setSelectedCategories((prev) =>
-      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((c: any) => c !== id) : [...prev, id]
     );
   };
 
@@ -320,7 +320,7 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
                   {tag}
                   <button
                     type="button"
-                    onClick={() => setTags(tags.filter((t) => t !== tag))}
+                    onClick={() => setTags(tags.filter((t: any) => t !== tag))}
                     className="hover:text-indigo-900"
                   >
                     <X className="w-3 h-3" />

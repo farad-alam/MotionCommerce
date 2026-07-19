@@ -13,8 +13,8 @@ export default async function ReviewsPage() {
     },
   });
 
-  const pending = reviews.filter((r) => !r.isApproved);
-  const approved = reviews.filter((r) => r.isApproved);
+  const pending = reviews.filter((r: any) => !r.isApproved);
+  const approved = reviews.filter((r: any) => r.isApproved);
 
   return (
     <div className="space-y-6">
