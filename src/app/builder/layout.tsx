@@ -1,11 +1,28 @@
 import { ReactNode } from "react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
 
-export default function BuilderLayout({
+const ALLOWED_ROLES = ["SUPER_ADMIN", "AGENCY_STAFF", "CLIENT_ADMIN"];
+
+export default async function BuilderLayout({
   children,
 }: {
   children: ReactNode;
 }) {
+  const session = await auth();
+
+  // Redirect unauthenticated users to login
+  if (!session || !session.user) {
+    redirect("/en/login?callbackUrl=/builder");
+  }
+
+  // Redirect users without the required role
+  const role = session.user.role as string;
+  if (!ALLOWED_ROLES.includes(role)) {
+    redirect("/en?error=unauthorized");
+  }
+
   return (
     <div className="flex h-screen flex-col bg-slate-900 text-slate-50">
       <header className="flex h-14 items-center justify-between border-b border-slate-800 bg-slate-950 px-6">

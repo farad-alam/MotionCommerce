@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // section-schemas.ts  —  CLIENT SAFE
-// Contains only plain data (labels + default settings). Zero server imports.
-// Used by the builder UI ("use client" pages).
+// Contains only plain data (labels + default settings + fieldMeta).
+// Zero server imports. Used by the builder UI ("use client" pages).
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type SectionType =
@@ -26,9 +26,33 @@ export interface SectionConfig {
   settings: Record<string, any>;
 }
 
+export type FieldType =
+  | "text"
+  | "textarea"
+  | "number"
+  | "boolean"
+  | "color"
+  | "image"
+  | "url"
+  | "datetime"
+  | "select"
+  | "repeatable";
+
+export interface FieldMeta {
+  type: FieldType;
+  label: string;
+  options?: string[]; // For 'select' type
+  itemSchema?: string[]; // For 'repeatable' type — the sub-field keys
+  placeholder?: string;
+}
+
 export const SectionSchemas: Record<
   SectionType,
-  { label: string; defaultSettings: Record<string, any> }
+  {
+    label: string;
+    defaultSettings: Record<string, any>;
+    fieldMeta: Record<string, FieldMeta>;
+  }
 > = {
   // ── Tier 1 — Universal ────────────────────────────────────────────
   "announcement-bar": {
@@ -41,6 +65,14 @@ export const SectionSchemas: Record<
       textColor: "#ffffff",
       emoji: "",
     },
+    fieldMeta: {
+      text: { type: "text", label: "Announcement Text" },
+      linkText: { type: "text", label: "Link Button Text" },
+      linkUrl: { type: "url", label: "Link URL" },
+      bgColor: { type: "color", label: "Background Color" },
+      textColor: { type: "color", label: "Text Color" },
+      emoji: { type: "text", label: "Emoji (optional)" },
+    },
   },
   "hero": {
     label: "🖼 Hero Banner",
@@ -52,12 +84,28 @@ export const SectionSchemas: Record<
       backgroundImage: "",
       alignment: "center",
     },
+    fieldMeta: {
+      title: { type: "text", label: "Headline" },
+      subtitle: { type: "textarea", label: "Sub-headline" },
+      buttonText: { type: "text", label: "Button Text" },
+      buttonLink: { type: "url", label: "Button Link" },
+      backgroundImage: { type: "image", label: "Background Image URL" },
+      alignment: {
+        type: "select",
+        label: "Text Alignment",
+        options: ["left", "center", "right"],
+      },
+    },
   },
   "category-grid": {
     label: "🗂 Category Grid",
     defaultSettings: {
       title: "Shop by Category",
       limit: 6,
+    },
+    fieldMeta: {
+      title: { type: "text", label: "Section Title" },
+      limit: { type: "number", label: "Max Categories to Show" },
     },
   },
   "product-grid": {
@@ -67,6 +115,16 @@ export const SectionSchemas: Record<
       limit: 8,
       categoryId: "",
       showViewAll: true,
+    },
+    fieldMeta: {
+      title: { type: "text", label: "Section Title" },
+      limit: { type: "number", label: "Max Products to Show" },
+      categoryId: {
+        type: "text",
+        label: "Filter by Category ID (leave blank for all)",
+        placeholder: "Leave blank to show all featured products",
+      },
+      showViewAll: { type: "boolean", label: "Show 'View All' Button" },
     },
   },
   "trust-bar": {
@@ -78,6 +136,13 @@ export const SectionSchemas: Record<
         { icon: "shield-check", title: "Secure Payment", subtitle: "100% protected" },
         { icon: "headphones", title: "24/7 Support", subtitle: "Always here" },
       ],
+    },
+    fieldMeta: {
+      badges: {
+        type: "repeatable",
+        label: "Trust Badges",
+        itemSchema: ["icon", "title", "subtitle"],
+      },
     },
   },
   "testimonials": {
@@ -91,6 +156,15 @@ export const SectionSchemas: Record<
         { name: "Aisha T.", role: "Verified Buyer", rating: 5, quote: "I was skeptical at first but this exceeded my expectations." },
       ],
     },
+    fieldMeta: {
+      title: { type: "text", label: "Section Title" },
+      subtitle: { type: "text", label: "Section Subtitle (optional)" },
+      testimonials: {
+        type: "repeatable",
+        label: "Testimonials",
+        itemSchema: ["name", "role", "rating", "quote"],
+      },
+    },
   },
   "newsletter": {
     label: "📧 Newsletter Signup",
@@ -101,6 +175,18 @@ export const SectionSchemas: Record<
       buttonText: "Subscribe",
       incentive: "Get 10% off your first order!",
       bgColor: "indigo",
+    },
+    fieldMeta: {
+      title: { type: "text", label: "Headline" },
+      subtitle: { type: "textarea", label: "Sub-headline" },
+      placeholder: { type: "text", label: "Email Input Placeholder" },
+      buttonText: { type: "text", label: "Button Text" },
+      incentive: { type: "text", label: "Incentive Text (shown above form)" },
+      bgColor: {
+        type: "select",
+        label: "Background Style",
+        options: ["indigo", "slate", "white"],
+      },
     },
   },
 
@@ -117,6 +203,20 @@ export const SectionSchemas: Record<
       imageAlt: "",
       imagePosition: "left",
     },
+    fieldMeta: {
+      eyebrow: { type: "text", label: "Eyebrow Label (small text above title)" },
+      title: { type: "text", label: "Heading" },
+      text: { type: "textarea", label: "Body Text" },
+      buttonText: { type: "text", label: "Button Text" },
+      buttonLink: { type: "url", label: "Button Link" },
+      image: { type: "image", label: "Image URL" },
+      imageAlt: { type: "text", label: "Image Alt Text" },
+      imagePosition: {
+        type: "select",
+        label: "Image Position",
+        options: ["left", "right"],
+      },
+    },
   },
   "promo-banner": {
     label: "🔥 Promo Banner",
@@ -129,6 +229,15 @@ export const SectionSchemas: Record<
       bgColor: "#dc2626",
       textColor: "#ffffff",
     },
+    fieldMeta: {
+      badge: { type: "text", label: "Badge Label (e.g. LIMITED TIME)" },
+      title: { type: "text", label: "Promo Headline" },
+      subtitle: { type: "textarea", label: "Sub-headline" },
+      buttonText: { type: "text", label: "Button Text" },
+      buttonLink: { type: "url", label: "Button Link" },
+      bgColor: { type: "color", label: "Background Color" },
+      textColor: { type: "color", label: "Text Color" },
+    },
   },
   "countdown-timer": {
     label: "⏳ Countdown Timer",
@@ -140,6 +249,15 @@ export const SectionSchemas: Record<
       buttonLink: "/products",
       bgColor: "#0f172a",
       showExpired: false,
+    },
+    fieldMeta: {
+      title: { type: "text", label: "Title" },
+      subtitle: { type: "text", label: "Subtitle" },
+      endDate: { type: "datetime", label: "Sale End Date & Time" },
+      buttonText: { type: "text", label: "Button Text" },
+      buttonLink: { type: "url", label: "Button Link" },
+      bgColor: { type: "color", label: "Background Color" },
+      showExpired: { type: "boolean", label: "Show section after timer expires" },
     },
   },
   "logo-carousel": {
@@ -154,6 +272,14 @@ export const SectionSchemas: Record<
         { name: "Brand Five", src: "" },
       ],
     },
+    fieldMeta: {
+      title: { type: "text", label: "Section Title" },
+      logos: {
+        type: "repeatable",
+        label: "Logos",
+        itemSchema: ["name", "src"],
+      },
+    },
   },
   "video": {
     label: "▶ Video Section",
@@ -164,6 +290,14 @@ export const SectionSchemas: Record<
       autoplay: false,
       muted: true,
       loop: false,
+    },
+    fieldMeta: {
+      title: { type: "text", label: "Section Title (optional)" },
+      subtitle: { type: "text", label: "Subtitle (optional)" },
+      videoUrl: { type: "url", label: "Video URL (YouTube, Vimeo, or direct MP4)" },
+      autoplay: { type: "boolean", label: "Autoplay" },
+      muted: { type: "boolean", label: "Muted" },
+      loop: { type: "boolean", label: "Loop" },
     },
   },
   "features-grid": {
@@ -181,6 +315,20 @@ export const SectionSchemas: Record<
         { icon: "gift", title: "Gift Wrapping", description: "Free gift wrapping available on all orders." },
       ],
     },
+    fieldMeta: {
+      title: { type: "text", label: "Section Title" },
+      subtitle: { type: "text", label: "Section Subtitle (optional)" },
+      columns: {
+        type: "select",
+        label: "Number of Columns",
+        options: ["2", "3", "4"],
+      },
+      features: {
+        type: "repeatable",
+        label: "Feature Items",
+        itemSchema: ["icon", "title", "description"],
+      },
+    },
   },
   "rich-text": {
     label: "📝 Rich Text Block",
@@ -192,6 +340,23 @@ export const SectionSchemas: Record<
       buttonLink: "",
       alignment: "center",
       maxWidth: "3xl",
+    },
+    fieldMeta: {
+      eyebrow: { type: "text", label: "Eyebrow Label (small text above heading)" },
+      heading: { type: "text", label: "Heading" },
+      body: { type: "textarea", label: "Body Text" },
+      buttonText: { type: "text", label: "Button Text (optional)" },
+      buttonLink: { type: "url", label: "Button Link" },
+      alignment: {
+        type: "select",
+        label: "Text Alignment",
+        options: ["left", "center", "right"],
+      },
+      maxWidth: {
+        type: "select",
+        label: "Max Content Width",
+        options: ["sm", "md", "lg", "xl", "2xl", "3xl", "4xl", "5xl"],
+      },
     },
   },
 };
