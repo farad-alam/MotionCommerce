@@ -23,7 +23,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ slug: 
     const data = await req.json();
     const result = await configService.updatePageLayout(resolvedParams.slug, data);
     
-    revalidateTag(CACHE_TAGS.PAGES);
+    revalidateTag(CACHE_TAGS.PAGES, "max");
     
     return NextResponse.json({ success: true, data: result });
   } catch (error: any) {
