@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { FieldMeta } from "@/config/sections/section-schemas";
 import { RepeatableFieldEditor } from "./RepeatableFieldEditor";
 import { LayoutTemplate, X, CheckCircle2 } from "lucide-react";
@@ -15,6 +16,11 @@ interface FieldRendererProps {
 
 export function FieldRenderer({ fieldKey, value, meta, onChange, sectionType }: FieldRendererProps) {
   const [modalOpen, setModalOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const inputClass =
     "w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-1.5 text-sm text-white focus:ring-1 focus:ring-indigo-500 focus:outline-none";
@@ -33,7 +39,7 @@ export function FieldRenderer({ fieldKey, value, meta, onChange, sectionType }: 
           <LayoutTemplate className="w-5 h-5" />
         </button>
 
-        {modalOpen && (
+        {modalOpen && mounted && createPortal(
           <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 sm:p-6 lg:p-12">
             <div className="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl w-full max-w-7xl h-full max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
               <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950">
@@ -77,7 +83,7 @@ export function FieldRenderer({ fieldKey, value, meta, onChange, sectionType }: 
                         <div className="relative w-full aspect-[16/9] bg-white overflow-hidden flex items-center justify-center">
                           <div className="absolute top-1/2 left-1/2 w-[1600px] h-[900px] -translate-x-1/2 -translate-y-1/2 origin-center transform scale-[0.35] sm:scale-[0.4] lg:scale-[0.35] xl:scale-[0.45] pointer-events-none">
                             <iframe
-                              src={`/preview?section=${sectionType}&variant=${opt}`}
+                              src={`/en/preview?section=${sectionType}&variant=${opt}`}
                               className="w-full h-full border-0"
                               loading="lazy"
                               tabIndex={-1}
@@ -99,7 +105,8 @@ export function FieldRenderer({ fieldKey, value, meta, onChange, sectionType }: 
                 </div>
               </div>
             </div>
-          </div>
+          </div>,
+          document.body
         )}
       </>
     );
