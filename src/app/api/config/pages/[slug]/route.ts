@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { configService } from "@/server/services/config.service";
 import { auth } from "@/lib/auth";
+import { revalidateTag } from "next/cache";
+import { CACHE_TAGS } from "@/lib/cache-tags";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +22,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ slug: 
     const resolvedParams = await params;
     const data = await req.json();
     const result = await configService.updatePageLayout(resolvedParams.slug, data);
+    
+    revalidateTag(CACHE_TAGS.PAGES);
     
     return NextResponse.json({ success: true, data: result });
   } catch (error: any) {

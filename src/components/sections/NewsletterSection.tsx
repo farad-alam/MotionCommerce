@@ -33,6 +33,51 @@ export function NewsletterSection({ settings }: { settings: any }) {
     ? "bg-slate-50 text-slate-900"
     : "bg-indigo-600 text-white";
 
+  const variant = settings.variant || "default";
+
+  if (variant === "minimal") {
+    return (
+      <section className="w-full py-16 bg-white dark:bg-slate-950">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center gap-8">
+          <div className="flex-1 text-center md:text-left">
+            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">{title}</h2>
+            {subtitle && <p className="text-slate-600 dark:text-slate-400">{subtitle}</p>}
+            {incentive && !done && (
+              <p className="text-sm text-indigo-600 dark:text-indigo-400 mt-2 font-medium">{incentive}</p>
+            )}
+          </div>
+
+          <div className="w-full md:w-auto md:min-w-[320px]">
+            {done ? (
+              <div className="bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-xl p-4 font-medium text-center border border-green-200 dark:border-green-800">
+                🎉 You're subscribed!
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-full">
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={placeholder}
+                  className="w-full rounded-xl px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-semibold rounded-xl hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors disabled:opacity-50"
+                >
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : buttonText}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Default Variant
   return (
     <section className={`w-full py-16 ${bgClass}`}>
       <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">

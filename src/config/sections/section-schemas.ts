@@ -77,6 +77,7 @@ export const SectionSchemas: Record<
   "hero": {
     label: "🖼 Hero Banner",
     defaultSettings: {
+      variant: "default",
       title: "Welcome to our store",
       subtitle: "Discover amazing products at unbeatable prices.",
       buttonText: "Shop Now",
@@ -85,6 +86,11 @@ export const SectionSchemas: Record<
       alignment: "center",
     },
     fieldMeta: {
+      variant: {
+        type: "select",
+        label: "Design Variant",
+        options: ["default", "split", "minimal"],
+      },
       title: { type: "text", label: "Headline" },
       subtitle: { type: "textarea", label: "Sub-headline" },
       buttonText: { type: "text", label: "Button Text" },
@@ -100,10 +106,16 @@ export const SectionSchemas: Record<
   "category-grid": {
     label: "🗂 Category Grid",
     defaultSettings: {
+      variant: "default",
       title: "Shop by Category",
       limit: 6,
     },
     fieldMeta: {
+      variant: {
+        type: "select",
+        label: "Design Variant",
+        options: ["default", "cards"],
+      },
       title: { type: "text", label: "Section Title" },
       limit: { type: "number", label: "Max Categories to Show" },
     },
@@ -111,12 +123,18 @@ export const SectionSchemas: Record<
   "product-grid": {
     label: "🛍 Product Grid",
     defaultSettings: {
+      variant: "default",
       title: "Featured Products",
       limit: 8,
       categoryId: "",
       showViewAll: true,
     },
     fieldMeta: {
+      variant: {
+        type: "select",
+        label: "Design Variant",
+        options: ["default", "carousel"],
+      },
       title: { type: "text", label: "Section Title" },
       limit: { type: "number", label: "Max Products to Show" },
       categoryId: {
@@ -169,6 +187,7 @@ export const SectionSchemas: Record<
   "newsletter": {
     label: "📧 Newsletter Signup",
     defaultSettings: {
+      variant: "default",
       title: "Stay in the loop",
       subtitle: "Subscribe to get special offers, free giveaways, and exclusive deals.",
       placeholder: "Enter your email address",
@@ -177,6 +196,11 @@ export const SectionSchemas: Record<
       bgColor: "indigo",
     },
     fieldMeta: {
+      variant: {
+        type: "select",
+        label: "Design Variant",
+        options: ["default", "minimal"],
+      },
       title: { type: "text", label: "Headline" },
       subtitle: { type: "textarea", label: "Sub-headline" },
       placeholder: { type: "text", label: "Email Input Placeholder" },
