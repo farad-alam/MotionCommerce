@@ -8,15 +8,13 @@ import { revalidateTag } from "next/cache";
 import { CACHE_TAGS } from "@/lib/cache-tags";
 
 const updateSiteConfigSchema = z.object({
-  siteName: z.string().min(1).nullable().optional(),
-  description: z.string().nullable().optional(),
+  siteName: z.string().min(1).optional(),
+  tagline: z.string().nullable().optional(),
   contactEmail: z.string().email().nullable().optional().or(z.literal("")),
   contactPhone: z.string().nullable().optional(),
-  address: z.string().nullable().optional(),
-  currency: z.string().nullable().optional(),
-  taxRate: z.number().min(0).max(100).nullable().optional(),
+  contactAddress: z.string().nullable().optional(),
+  currency: z.string().optional(),
   socialLinks: z.any().nullable().optional(),
-  orderPrefix: z.string().nullable().optional(),
 });
 
 const updateThemeConfigSchema = z.object({
