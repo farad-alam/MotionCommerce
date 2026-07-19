@@ -8,7 +8,7 @@ import { revalidateTag } from "next/cache";
 import { CACHE_TAGS } from "@/lib/cache-tags";
 
 const updateSiteConfigSchema = z.object({
-  storeName: z.string().min(1).optional(),
+  siteName: z.string().min(1).optional(),
   description: z.string().optional(),
   contactEmail: z.string().email().optional(),
   contactPhone: z.string().optional(),

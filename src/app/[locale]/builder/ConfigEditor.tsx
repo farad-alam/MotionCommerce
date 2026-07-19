@@ -53,7 +53,7 @@ export function ConfigEditor({ initialSiteConfig, initialThemeConfig, initialFea
   };
 
   return (
-    <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Site Config Form */}
       <div className="bg-slate-800 p-6 rounded-xl border border-slate-700">
         <h2 className="text-xl font-semibold text-white mb-4">Store Config</h2>
@@ -62,8 +62,8 @@ export function ConfigEditor({ initialSiteConfig, initialThemeConfig, initialFea
             <label className="block text-sm text-slate-400 mb-1">Store Name</label>
             <input 
               type="text" 
-              value={siteConfig.storeName || ""} 
-              onChange={e => setSiteConfig({...siteConfig, storeName: e.target.value})}
+              value={siteConfig.siteName || ""} 
+              onChange={e => setSiteConfig({...siteConfig, siteName: e.target.value})}
               className="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-white"
             />
           </div>
@@ -86,49 +86,7 @@ export function ConfigEditor({ initialSiteConfig, initialThemeConfig, initialFea
         </div>
       </div>
 
-      {/* Theme Config Form */}
-      <div className="bg-slate-800 p-6 rounded-xl border border-slate-700">
-        <h2 className="text-xl font-semibold text-white mb-4">Theme Config</h2>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm text-slate-400 mb-1">Primary Color (Hex)</label>
-            <div className="flex gap-2">
-              <input 
-                type="color" 
-                value={themeConfig.primaryColor || "#4f46e5"} 
-                onChange={e => setThemeConfig({...themeConfig, primaryColor: e.target.value})}
-                className="h-10 w-10 rounded-md border-0 bg-transparent p-0"
-              />
-              <input 
-                type="text" 
-                value={themeConfig.primaryColor || ""} 
-                onChange={e => setThemeConfig({...themeConfig, primaryColor: e.target.value})}
-                className="flex-1 bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-white uppercase"
-              />
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm text-slate-400 mb-1">Font Family</label>
-            <select 
-              value={themeConfig.fontFamily || "Inter"}
-              onChange={e => setThemeConfig({...themeConfig, fontFamily: e.target.value})}
-              className="w-full bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-white"
-            >
-              <option value="Inter">Inter</option>
-              <option value="Roboto">Roboto</option>
-              <option value="Outfit">Outfit</option>
-              <option value="Playfair Display">Playfair Display</option>
-            </select>
-          </div>
-          <button 
-            onClick={handleSaveThemeConfig}
-            disabled={isSaving}
-            className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-md font-medium text-sm w-full"
-          >
-            {isSaving ? "Saving..." : "Save Theme Config"}
-          </button>
-        </div>
-      </div>
+
 
       {/* Feature Flags Form */}
       <div className="bg-slate-800 p-6 rounded-xl border border-slate-700">
