@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Clock } from "lucide-react";
 
 function pad(n: number) {
   return String(n).padStart(2, "0");
@@ -31,52 +33,89 @@ export function CountdownTimerSection({ settings }: { settings: any }) {
 
   if (timeLeft.expired && !settings.showExpired) return null;
 
-  const bgColor = settings.bgColor || "#0f172a";
+  const variant = settings.variant || "default";
+
+  if (variant === "inline") {
+    return (
+      <section className="w-full py-4 bg-primary text-primary-foreground border-y border-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <Clock className="w-5 h-5 opacity-80" />
+            <h2 className="text-sm sm:text-base font-bold uppercase tracking-widest">{settings.title}</h2>
+          </div>
+
+          {!timeLeft.expired && (
+            <div className="flex items-center gap-2 font-mono text-xl font-bold bg-background/20 px-4 py-1.5 rounded-[var(--theme-radius)]">
+              <span>{pad(timeLeft.days)}</span>
+              <span className="opacity-50">:</span>
+              <span>{pad(timeLeft.hours)}</span>
+              <span className="opacity-50">:</span>
+              <span>{pad(timeLeft.minutes)}</span>
+              <span className="opacity-50">:</span>
+              <span>{pad(timeLeft.seconds)}</span>
+            </div>
+          )}
+
+          {settings.buttonText && settings.buttonLink && (
+            <Link
+              href={settings.buttonLink}
+              className="text-sm font-bold underline underline-offset-4 hover:text-white/80 transition-colors uppercase tracking-widest"
+            >
+              {settings.buttonText}
+            </Link>
+          )}
+        </div>
+      </section>
+    );
+  }
+
+  // Default Variant
+  const bgColor = settings.bgColor || "var(--theme-foreground)";
 
   return (
     <section
       style={{ backgroundColor: bgColor }}
-      className="w-full py-12 text-white"
+      className="w-full py-16 text-background"
     >
       <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
         {settings.title && (
-          <h2 className="text-3xl font-bold mb-2">{settings.title}</h2>
+          <h2 className="text-4xl font-black mb-4 uppercase tracking-tight">{settings.title}</h2>
         )}
         {settings.subtitle && (
-          <p className="text-slate-300 mb-8">{settings.subtitle}</p>
+          <p className="text-background/80 mb-10 text-lg">{settings.subtitle}</p>
         )}
 
         {timeLeft.expired ? (
           <p className="text-2xl font-semibold text-rose-400">This offer has expired.</p>
         ) : (
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex items-center justify-center gap-2 sm:gap-4">
             {[
               { label: "Days", value: timeLeft.days },
               { label: "Hours", value: timeLeft.hours },
-              { label: "Minutes", value: timeLeft.minutes },
-              { label: "Seconds", value: timeLeft.seconds },
+              { label: "Mins", value: timeLeft.minutes },
+              { label: "Secs", value: timeLeft.seconds },
             ].map(({ label, value }, i) => (
-              <div key={label} className="flex items-center gap-4">
+              <div key={label} className="flex items-center gap-2 sm:gap-4">
                 <div className="flex flex-col items-center">
-                  <div className="bg-white/10 rounded-2xl w-20 h-20 flex items-center justify-center text-4xl font-black tabular-nums backdrop-blur-sm border border-white/10">
+                  <div className="bg-background text-foreground rounded-[var(--theme-radius)] w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center text-3xl sm:text-4xl font-black tabular-nums shadow-lg">
                     {pad(value)}
                   </div>
-                  <span className="text-xs text-slate-400 mt-2 font-medium tracking-widest uppercase">{label}</span>
+                  <span className="text-[10px] sm:text-xs text-background/60 mt-3 font-bold tracking-[0.2em] uppercase">{label}</span>
                 </div>
-                {i < 3 && <span className="text-3xl font-black text-white/40 mb-5">:</span>}
+                {i < 3 && <span className="text-3xl font-black text-background/40 mb-7">:</span>}
               </div>
             ))}
           </div>
         )}
 
         {settings.buttonText && settings.buttonLink && (
-          <div className="mt-10">
-            <a
+          <div className="mt-12">
+            <Link
               href={settings.buttonLink}
-              className="inline-block px-8 py-3.5 bg-indigo-500 hover:bg-indigo-400 text-white font-bold rounded-full transition-colors text-lg"
+              className="inline-block px-10 py-4 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-full transition-colors text-lg uppercase tracking-wider shadow-xl"
             >
               {settings.buttonText}
-            </a>
+            </Link>
           </div>
         )}
       </div>
