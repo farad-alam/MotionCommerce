@@ -94,3 +94,51 @@ return paginatedResponse(items, paginationMeta);
 2. Push schema to database: `npx prisma db push`
 3. Seed default configurations: `npx prisma db seed`
 4. Run development server: `pnpm run dev`
+
+---
+
+## Section Library (Homepage Builder)
+
+The **Homepage Builder** (`/builder/homepage`) allows merchants to build their storefront homepage by composing drag-and-drop sections. Each section is a self-contained React component.
+
+### Architecture
+- **Section components**: `src/components/sections/` — One file per section type (e.g., `HeroSection.tsx`, `TestimonialsSection.tsx`).
+- **Section renderer**: `src/components/sections/SectionRenderer.tsx` — A switch-case component that maps a section `type` string to its React component.
+- **Homepage template data**: Stored in DB as a JSON array of section configs in `SiteConfig.homepageTemplate`.
+- **Builder UI**: `src/app/builder/homepage/page.tsx` — Drag-and-drop editor to add/remove/reorder sections.
+
+### Section Config Shape
+Each section in the `homepageTemplate` JSON array follows this structure:
+```typescript
+{
+  id: string;      // Unique ID (cuid)
+  type: string;    // e.g., "hero", "featured-products", "testimonials"
+  order: number;   // Display order (0-indexed)
+  config: Record<string, unknown>; // Section-specific settings
+}
+```
+
+### Full Section Library Reference
+A full research document listing all **38 e-commerce sections** — categorized by priority tier (Universal → Specialized) — with descriptions and recommended build order is available here:
+
+> 📄 **[E-Commerce Section Library Research](C:\Users\Farad\.gemini\antigravity-ide\brain\fc5ef9f1-0b66-4962-95ee-4e9e0399ab9d\ecommerce_sections_research.md)**
+
+### Sections Currently Implemented
+
+| Section Type | Component | Tier |
+|---|---|---|
+| `hero` | `HeroSection.tsx` | 1 — Universal |
+| `featured-products` | `FeaturedProductsSection.tsx` | 1 — Universal |
+| `cta` | `CtaSection.tsx` | 2 — High Impact |
+| `announcement-bar` | `AnnouncementBarSection.tsx` | 1 — Universal |
+| `trust-bar` | `TrustBarSection.tsx` | 1 — Universal |
+| `category-grid` | `CategoryGridSection.tsx` | 1 — Universal |
+| `testimonials` | `TestimonialsSection.tsx` | 1 — Universal |
+| `newsletter` | `NewsletterSection.tsx` | 1 — Universal |
+| `image-with-text` | `ImageWithTextSection.tsx` | 2 — High Impact |
+| `promo-banner` | `PromoBannerSection.tsx` | 2 — High Impact |
+| `countdown-timer` | `CountdownTimerSection.tsx` | 2 — High Impact |
+| `logo-carousel` | `LogoCarouselSection.tsx` | 2 — High Impact |
+| `video` | `VideoSection.tsx` | 2 — High Impact |
+| `features-grid` | `FeaturesGridSection.tsx` | 2 — High Impact |
+| `rich-text` | `RichTextSection.tsx` | 2 — High Impact |

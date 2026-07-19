@@ -31,14 +31,22 @@ const updateThemeConfigSchema = z.object({
 });
 
 const updateFeatureFlagsSchema = z.object({
-  guestCheckout: z.boolean().optional(),
-  whatsappOrders: z.boolean().optional(),
+  // Accept either { flags: {...} } or a flat object of flags
+  flags: z.record(z.string(), z.any()).optional(),
+  // Legacy flat fields for backwards compatibility
   blog: z.boolean().optional(),
-  wishlist: z.boolean().optional(),
   reviews: z.boolean().optional(),
   coupons: z.boolean().optional(),
-  inventoryTracking: z.boolean().optional(),
+  wishlist: z.boolean().optional(),
+  whatsapp: z.boolean().optional(),
+  guestCheckout: z.boolean().optional(),
+  stockAlerts: z.boolean().optional(),
+  compareProducts: z.boolean().optional(),
+  sizeGuide: z.boolean().optional(),
   multiCurrency: z.boolean().optional(),
+  loyaltyPoints: z.boolean().optional(),
+  whatsappNumber: z.string().optional(),
+  whatsappMessageTemplate: z.string().optional(),
 });
 
 export class ConfigController extends BaseController {
@@ -87,18 +95,24 @@ export class ConfigController extends BaseController {
   async updateFeatureFlags(req: NextRequest) {
     try {
       await requireRole(Role.CLIENT_ADMIN);
-      const data = await validateRequest(updateFeatureFlagsSchema, await req.json());
-      
+      const body = await validateRequest(updateFeatureFlagsSchema, await req.json());
+
+      // Support both { flags: {...} } nested and legacy flat-flag format
+      const flagData = (body as any).flags ?? (() => {
+        const { flags: _ignored, ...rest } = body as any;
+        return rest;
+      })();
+
       // FeatureFlags stores everything in the flags JSON blob
       const config = await prisma.featureFlags.upsert({
         where: { id: "default-feature-flags" },
-        update: { flags: data as any },
+        update: { flags: flagData as any },
         create: {
           id: "default-feature-flags",
-          flags: { guestCheckout: true, whatsappOrders: false, ...data },
+          flags: { blog: true, reviews: true, coupons: true, wishlist: true, guestCheckout: true, ...flagData },
         },
       });
-      
+
       revalidateTag(CACHE_TAGS.FEATURES, "max");
       return this.success(config);
     } catch (error) {

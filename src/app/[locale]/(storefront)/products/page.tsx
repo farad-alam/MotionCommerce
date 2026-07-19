@@ -2,11 +2,19 @@ import Link from "next/link";
 import { getProducts, getCategories } from "@/lib/storefront-data";
 import { ProductCard } from "@/components/storefront/ProductCard";
 import { ProductSearch } from "@/components/storefront/ProductSearch";
-import { SlidersHorizontal } from "lucide-react";
+import { ProductFilters } from "@/components/storefront/ProductFilters";
 
 interface ProductsPageProps {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ category?: string; search?: string; page?: string }>;
+  searchParams: Promise<{ 
+    category?: string; 
+    search?: string; 
+    page?: string;
+    sort?: string;
+    minPrice?: string;
+    maxPrice?: string;
+    inStock?: string;
+  }>;
 }
 
 export const metadata = {
@@ -16,15 +24,32 @@ export const metadata = {
 
 export default async function ProductsPage({ params, searchParams }: ProductsPageProps) {
   const { locale } = await params;
-  const { category, search, page } = await searchParams;
+  const { category, search, page, sort, minPrice, maxPrice, inStock } = await searchParams;
 
   const currentPage = parseInt(page || "1", 10);
   const limit = 24;
   const skip = (currentPage - 1) * limit;
 
+  let sortBy: "price" | "createdAt" | undefined;
+  let sortOrder: "asc" | "desc" | undefined;
+
+  if (sort === "price-asc") { sortBy = "price"; sortOrder = "asc"; }
+  if (sort === "price-desc") { sortBy = "price"; sortOrder = "desc"; }
+  if (sort === "newest") { sortBy = "createdAt"; sortOrder = "desc"; }
+
   const [categories, { products, total }] = await Promise.all([
     getCategories(),
-    getProducts({ categoryId: category, search, limit, skip }),
+    getProducts({ 
+      categoryId: category, 
+      search, 
+      limit, 
+      skip,
+      sortBy,
+      sortOrder,
+      minPrice: minPrice ? Number(minPrice) : undefined,
+      maxPrice: maxPrice ? Number(maxPrice) : undefined,
+      inStock: inStock === "true",
+    }),
   ]);
 
   const totalPages = Math.ceil(total / limit);
@@ -44,46 +69,9 @@ export default async function ProductsPage({ params, searchParams }: ProductsPag
 
       <div className="flex gap-8">
         {/* Sidebar filter */}
-        <aside className="hidden lg:block w-56 flex-shrink-0">
+        <aside className="hidden lg:block w-64 flex-shrink-0">
           <div className="sticky top-24">
-            <div className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-3">
-              <SlidersHorizontal className="w-4 h-4" />
-              Categories
-            </div>
-            <ul className="space-y-1">
-              <li>
-                <Link
-                  href={`/${locale}/products${search ? `?search=${search}` : ""}`}
-                  className={`block text-sm px-3 py-1.5 rounded-md transition-colors ${!category ? "bg-indigo-50 text-indigo-700 font-medium" : "text-slate-600 hover:bg-slate-50"}`}
-                >
-                  All Products
-                </Link>
-              </li>
-              {categories.map((cat) => (
-                <li key={cat.id}>
-                  <Link
-                    href={`/${locale}/products?category=${cat.slug}${search ? `&search=${search}` : ""}`}
-                    className={`block text-sm px-3 py-1.5 rounded-md transition-colors ${category === cat.slug ? "bg-indigo-50 text-indigo-700 font-medium" : "text-slate-600 hover:bg-slate-50"}`}
-                  >
-                    {cat.name}
-                  </Link>
-                  {cat.children && cat.children.length > 0 && (
-                    <ul className="ml-3 mt-1 space-y-1 border-l border-slate-200 pl-3">
-                      {cat.children.map((child) => (
-                        <li key={child.id}>
-                          <Link
-                            href={`/${locale}/products?category=${child.slug}${search ? `&search=${search}` : ""}`}
-                            className={`block text-xs px-2 py-1 rounded-md transition-colors ${category === child.slug ? "text-indigo-700 font-medium" : "text-slate-500 hover:text-slate-800"}`}
-                          >
-                            {child.name}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </li>
-              ))}
-            </ul>
+            <ProductFilters categories={categories} locale={locale} />
           </div>
         </aside>
 

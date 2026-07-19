@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getProductBySlug, getSiteConfig, getFeatureFlags } from "@/lib/storefront-data";
 import { AddToCartButton } from "@/components/storefront/AddToCartButton";
 import { WhatsAppOrderButton } from "@/components/storefront/WhatsAppOrderButton";
+import { ProductReviewForm } from "@/components/storefront/ProductReviewForm";
 import { Star, ChevronRight, Package, ShieldCheck, RotateCcw } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -47,6 +48,8 @@ export default async function ProductDetailPage({ params }: PDPProps) {
   const avgRating = product.reviews.length > 0
     ? product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length
     : null;
+
+  const reviewsEnabled = (featureFlags?.flags as Record<string, boolean>)?.enableReviews ?? true;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
@@ -198,6 +201,10 @@ export default async function ProductDetailPage({ params }: PDPProps) {
               productId={product.id}
               stock={product.stock}
               className="flex-1"
+              name={product.name}
+              price={price}
+              slug={product.slug}
+              image={product.images?.[0]?.url}
             />
             {whatsappEnabled && whatsappNumber && (
               <WhatsAppOrderButton
@@ -237,7 +244,7 @@ export default async function ProductDetailPage({ params }: PDPProps) {
       )}
 
       {/* Reviews */}
-      {product.reviews.length > 0 && (
+      {(product.reviews.length > 0 || reviewsEnabled) && (
         <div className="mt-12 border-t border-slate-100 pt-8">
           <h2 className="text-xl font-bold text-slate-900 mb-6">
             Customer Reviews
@@ -247,29 +254,42 @@ export default async function ProductDetailPage({ params }: PDPProps) {
               </span>
             )}
           </h2>
-          <div className="space-y-4">
-            {product.reviews.map((review) => (
-              <div key={review.id} className="bg-white rounded-xl border border-slate-100 p-5">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="font-medium text-slate-800">{review.user.name || "Customer"}</p>
-                    <div className="flex mt-1">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <Star
-                          key={star}
-                          className={`w-3.5 h-3.5 ${star <= review.rating ? "text-amber-400 fill-amber-400" : "text-slate-200 fill-slate-200"}`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  <span className="text-xs text-slate-400">
-                    {new Date(review.createdAt).toLocaleDateString()}
-                  </span>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-1">
+              {reviewsEnabled && <ProductReviewForm productId={product.id} />}
+            </div>
+            
+            <div className="lg:col-span-2 space-y-4">
+              {product.reviews.length === 0 ? (
+                <div className="text-center py-10 bg-slate-50 border border-slate-100 rounded-xl">
+                  <p className="text-slate-500">No reviews yet. Be the first to review this product!</p>
                 </div>
-                {review.title && <p className="mt-2 font-medium text-slate-700">{review.title}</p>}
-                {review.comment && <p className="mt-1 text-sm text-slate-600">{review.comment}</p>}
-              </div>
-            ))}
+              ) : (
+                product.reviews.map((review) => (
+                  <div key={review.id} className="bg-white rounded-xl border border-slate-100 p-5">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <p className="font-medium text-slate-800">{review.user.name || "Customer"}</p>
+                        <div className="flex mt-1">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star
+                              key={star}
+                              className={`w-3.5 h-3.5 ${star <= review.rating ? "text-amber-400 fill-amber-400" : "text-slate-200 fill-slate-200"}`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      <span className="text-xs text-slate-400">
+                        {new Date(review.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                    {review.title && <p className="mt-2 font-medium text-slate-700">{review.title}</p>}
+                    {review.comment && <p className="mt-1 text-sm text-slate-600">{review.comment}</p>}
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </div>
       )}

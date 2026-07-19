@@ -40,12 +40,23 @@ export const getCategories = unstable_cache(
 
 /** Cached product listing with optional filters */
 export const getProducts = (
-  params?: { categoryId?: string; search?: string; limit?: number; skip?: number; isFeatured?: boolean }
+  params?: { 
+    categoryId?: string; 
+    search?: string; 
+    limit?: number; 
+    skip?: number; 
+    isFeatured?: boolean;
+    minPrice?: number;
+    maxPrice?: number;
+    inStock?: boolean;
+    sortBy?: "price" | "createdAt";
+    sortOrder?: "asc" | "desc";
+  }
 ) => {
-  const { categoryId, search, limit = 24, skip = 0, isFeatured } = params || {};
+  const { categoryId, search, limit = 24, skip = 0, isFeatured, minPrice, maxPrice, inStock, sortBy, sortOrder } = params || {};
 
   // Cache key must be stable – include all filter values
-  const cacheKey = `products-${categoryId ?? ""}-${search ?? ""}-${limit}-${skip}-${isFeatured ?? ""}`;
+  const cacheKey = `products-${categoryId ?? ""}-${search ?? ""}-${limit}-${skip}-${isFeatured ?? ""}-${minPrice ?? ""}-${maxPrice ?? ""}-${inStock ?? ""}-${sortBy ?? ""}-${sortOrder ?? ""}`;
 
   return unstable_cache(
     async () => {
@@ -53,13 +64,26 @@ export const getProducts = (
       if (categoryId) where.categories = { some: { categoryId } };
       if (search) where.name = { contains: search, mode: "insensitive" };
       if (isFeatured !== undefined) where.isFeatured = isFeatured;
+      if (minPrice !== undefined || maxPrice !== undefined) {
+        where.price = {};
+        if (minPrice !== undefined) (where.price as any).gte = minPrice;
+        if (maxPrice !== undefined) (where.price as any).lte = maxPrice;
+      }
+      if (inStock) {
+        where.stock = { gt: 0 };
+      }
+
+      let orderBy: any[] = [{ isFeatured: "desc" }, { sortOrder: "asc" }, { createdAt: "desc" }];
+      if (sortBy) {
+        orderBy = [{ [sortBy]: sortOrder || "desc" }, ...orderBy];
+      }
 
       const [products, total] = await Promise.all([
         prisma.product.findMany({
           where,
           skip,
           take: limit,
-          orderBy: [{ isFeatured: "desc" }, { sortOrder: "asc" }, { createdAt: "desc" }],
+          orderBy,
           include: {
             images: { where: { isDefault: true }, take: 1 },
             categories: { include: { category: { select: { id: true, name: true, slug: true } } } },

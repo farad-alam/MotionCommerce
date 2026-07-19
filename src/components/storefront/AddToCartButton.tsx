@@ -1,45 +1,45 @@
 "use client";
 
-import { ShoppingCart, Loader2 } from "lucide-react";
+import { ShoppingCart, Loader2, Check } from "lucide-react";
 import { useState } from "react";
+import { useCart } from "@/providers/cart-provider";
+import { toast } from "sonner";
 
 interface AddToCartButtonProps {
   productId: string;
   stock: number;
   className?: string;
   variantId?: string;
+  name: string;
+  price: number;
+  image?: string;
+  slug: string;
+  variantName?: string;
 }
 
-export function AddToCartButton({ productId, stock, className = "", variantId }: AddToCartButtonProps) {
+export function AddToCartButton({
+  productId,
+  stock,
+  className = "",
+  variantId,
+  name,
+  price,
+  image,
+  slug,
+  variantName,
+}: AddToCartButtonProps) {
   const [quantity, setQuantity] = useState(1);
-  const [loading, setLoading] = useState(false);
   const [added, setAdded] = useState(false);
+  const { addItem, openCart } = useCart();
   const isOutOfStock = stock === 0;
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = () => {
     if (isOutOfStock) return;
-    setLoading(true);
-
-    // --- Cart Logic ---
-    // For guest users: store in localStorage.
-    // For logged-in users: POST /api/cart (Phase 6 - Checkout).
-    // For now we use localStorage as a client-side guest cart (feature from plan).
-    try {
-      const cartKey = "mc_guest_cart";
-      const existing = JSON.parse(localStorage.getItem(cartKey) || "[]");
-      const key = variantId ? `${productId}::${variantId}` : productId;
-      const idx = existing.findIndex((i: Record<string, unknown>) => i.key === key);
-      if (idx >= 0) {
-        existing[idx].quantity += quantity;
-      } else {
-        existing.push({ key, productId, variantId, quantity });
-      }
-      localStorage.setItem(cartKey, JSON.stringify(existing));
-      setAdded(true);
-      setTimeout(() => setAdded(false), 2000);
-    } finally {
-      setLoading(false);
-    }
+    addItem({ productId, variantId, name, price, image, slug, variantName, stock, quantity });
+    setAdded(true);
+    toast.success(`${quantity}x ${name} added to cart`);
+    openCart();
+    setTimeout(() => setAdded(false), 2000);
   };
 
   return (
@@ -62,10 +62,11 @@ export function AddToCartButton({ productId, stock, className = "", variantId }:
           +
         </button>
       </div>
+
       {/* Add to Cart */}
       <button
         onClick={handleAddToCart}
-        disabled={isOutOfStock || loading}
+        disabled={isOutOfStock}
         className={`flex-1 inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm transition-all ${
           added
             ? "bg-emerald-600 text-white"
@@ -74,11 +75,7 @@ export function AddToCartButton({ productId, stock, className = "", variantId }:
             : "bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white shadow-sm"
         }`}
       >
-        {loading ? (
-          <Loader2 className="w-4 h-4 animate-spin" />
-        ) : (
-          <ShoppingCart className="w-4 h-4" />
-        )}
+        {added ? <Check className="w-4 h-4" /> : <ShoppingCart className="w-4 h-4" />}
         {added ? "Added!" : isOutOfStock ? "Out of Stock" : "Add to Cart"}
       </button>
     </div>

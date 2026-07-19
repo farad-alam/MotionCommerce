@@ -66,7 +66,7 @@ export async function StorefrontFooter({ locale }: { locale: string }) {
                   All Products
                 </Link>
               </li>
-              {categories.slice(0, 6).map((cat) => (
+              {categories.slice(0, 6).map((cat: any) => (
                 <li key={cat.id}>
                   <Link
                     href={`/${locale}/products?category=${cat.slug}`}

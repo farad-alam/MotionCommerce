@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { getSiteConfig, getCategories } from "@/lib/storefront-data";
 import { LanguageToggler } from "./LanguageToggler";
-import { ShoppingCart, Search, Menu } from "lucide-react";
+import { Search, Menu } from "lucide-react";
+import { CartButton } from "./CartButton";
 
 export async function StorefrontHeader({ locale }: { locale: string }) {
   const [siteConfig, categories] = await Promise.all([getSiteConfig(), getCategories()]);
@@ -57,13 +58,7 @@ export async function StorefrontHeader({ locale }: { locale: string }) {
             >
               <Search className="w-5 h-5" />
             </Link>
-            <Link
-              href={`/${locale}/cart`}
-              className="relative p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors"
-              aria-label="Cart"
-            >
-              <ShoppingCart className="w-5 h-5" />
-            </Link>
+            <CartButton />
           </div>
         </div>
       </div>
